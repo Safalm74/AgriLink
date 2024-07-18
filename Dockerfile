@@ -1,15 +1,22 @@
-FROM node:20-alpine 
+# Stage 1: Build Stage
+FROM node:18 AS build
 # Set the working directory
 WORKDIR /app
 # Copy the package.json and package-lock.json files
 COPY package*.json ./
 # Install dependencies
 RUN npm install
+
+RUN npm install nodemon -g
 # Copy the rest of the application code
 COPY . .
-# Build the React app
-RUN npm run build
-# Expose port 8000
-EXPOSE 8000
-# Start nginx
-CMD ["ts-node", "src/index.ts"]
+
+# Set a default port value if not provided
+ARG PORT=8000
+ENV PORT=${PORT}
+
+# Expose the port
+EXPOSE ${PORT}
+
+# Start node server
+CMD ["npm", "start"]
