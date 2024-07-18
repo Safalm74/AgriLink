@@ -12,4 +12,4 @@ RUN npm run build
 # Expose port 8000
 EXPOSE 8000
 # Start nginx
-CMD ["node", "dist/index.js"]
+CMD ["nodemon", "src/index.ts"]
