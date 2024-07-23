@@ -5,12 +5,14 @@ import { genericErrorHandler, notFoundError } from './middleware/errorHandler';
 import { requestLogger } from './middleware/logger';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
 const limiter=rateLimit({
         windowMs:60*1000,
-        limit:10,
+        limit:1000,
         message:"Too many requests"
     });
 
@@ -23,8 +25,14 @@ app.use(limiter);
 //Middleware to parse incoming requests with JSON payload
 app.use(express.json()); 
 
+//Middleware to parse cookies
+app.use(cookieParser());
+
 //Middleware to log
 app.use (requestLogger);
+
+//Middleware to enable cors
+app.use(cors());
 
 //use main router
 app.use(Router); 

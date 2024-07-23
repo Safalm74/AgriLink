@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 
-const TABLE_NAME = 'test';
+const TABLE_NAME = 'users';
 
 
 /**
@@ -11,15 +11,20 @@ const TABLE_NAME = 'test';
  */
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable(TABLE_NAME, (table) => {
-    table.bigIncrements();
+    table.uuid('id').defaultTo(knex.raw('gen_random_uuid()')).primary();
 
-    table.string('msg',100).nullable();
+    table.string('first_name').notNullable();
+    table.string('last_name').notNullable();
+    table.string('email').notNullable();
+    table.string('password').notNullable();
+    table.string('phone').notNullable();
+    table.string('address').notNullable();
+    table.uuid('role').notNullable().references('id').inTable('roles').onDelete('CASCADE');
 
-
-    table.timestamp('created_at').nullable().defaultTo(knex.raw('now()'));
+    table.timestamp('created_at').notNullable().defaultTo(knex.raw('now()'));
     
     table
-      .bigInteger('created_by')
+      .uuid('created_by')
       .unsigned()
       .nullable()
       .references('id')
@@ -28,7 +33,7 @@ export async function up(knex: Knex): Promise<void> {
     table.timestamp('updated_at').nullable();
     
     table
-      .bigInteger('updated_by')
+      .uuid('updated_by')
       .unsigned()
       .references('id')
       .inTable(TABLE_NAME)

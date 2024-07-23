@@ -1,10 +1,18 @@
 import express from "express";
-import * as testcontroller from "../controller/test"
+import authRouter from "./auth";
+import userRouter from "./user";
+import farmRouter from "./farm";
 
 //Creating router object
 const router = express();
 
-//Route for home
-router.post("/", testcontroller.test);
+//Route to handle user authentication
+router.use("/auth", authRouter);
+
+//Route to handle user operations
+router.use("/user", userRouter);
+
+//Route to handle farm operations
+router.use("/farm", farmRouter);
 
 export default router;
