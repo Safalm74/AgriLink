@@ -1,5 +1,5 @@
 import { NextFunction, Response } from "express";
-import { Request } from "../interface/auth";
+import { Request } from "../interfaces/auth";
 import HttpStatusCode from "http-status-codes";
 import { UnaunthicatedError } from "../error/UnauthenticatedError";
 import { ForbiddenError } from "../error/ForbiddenError";
@@ -49,6 +49,6 @@ export function genericErrorHandler(
 
   return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
     message: "Internal Server Error",
-    error:error,
+    error: error,
   });
 }

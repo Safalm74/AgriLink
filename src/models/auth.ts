@@ -1,7 +1,12 @@
-import { IUserToken } from "../interface/auth";
+import { IUserToken } from "../interfaces/auth";
 import BaseModel from "./base";
 
 export class AuthModel extends BaseModel {
+  /**
+   * creates new access and refresh token
+   * @param userTokens
+   * @returns
+   */
   static async create(userTokens: IUserToken) {
     const { refreshToken: _rt, ...UserAccessToken } = userTokens;
     const { accessToken: _at, ...userRefreshToken } = userTokens;
@@ -15,6 +20,9 @@ export class AuthModel extends BaseModel {
       .table("refreshTokens")
       .returning("id");
 
-    return { accessTokenId: accessTokenId[0].id, refreshTokenId: refreshTokenId[0].id };
+    return {
+      accessTokenId: accessTokenId[0].id,
+      refreshTokenId: refreshTokenId[0].id,
+    };
   }
 }

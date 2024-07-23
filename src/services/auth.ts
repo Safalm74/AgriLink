@@ -1,18 +1,21 @@
 import config from "../config";
 import { UnaunthicatedError } from "../error/UnauthenticatedError";
-import { IUser } from "../interface/users";
+import { IUser } from "../interfaces/users";
 import { getUserByEmail } from "./user";
 import bcrypt from "bcrypt";
 import { sign, verify } from "jsonwebtoken";
 import loggerWithNameSpace from "../utils/logger";
-import { AuthModel } from "../model/auth";
-import { IUserToken } from "../interface/auth";
+import { AuthModel } from "../models/auth";
+import { IUserToken } from "../interfaces/auth";
 import { getRoleById } from "./role";
 
 const logger = loggerWithNameSpace("Auth Service");
 
-//service function to login:
-//returns new access and refresh token
+/**
+ * service function to login:
+ * @param body
+ * @returns new access and refresh token
+ */
 export async function login(body: Pick<IUser, "email" | "password">) {
   //to await bcrypt compare
   //getting existing user

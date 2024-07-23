@@ -2,8 +2,8 @@ export interface IFarm {
   id: string;
   phone: string;
   userId: string;
-  farm_name: string;
-  farm_address: string;
+  farmName: string;
+  farmAddress: string;
 }
 
 export interface IGetFarmQuery {

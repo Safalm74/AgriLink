@@ -1,9 +1,9 @@
 import { Response, NextFunction } from "express";
-import * as UserService from "../service/user";
+import * as UserService from "../services/user";
 import HttpStatusCode from "http-status-codes";
 import loggerWithNameSpace from "../utils/logger";
-import { Request } from "../interface/auth";
-import { IGetUserQuery } from "../interface/users";
+import { Request } from "../interfaces/auth";
+import { IGetUserQuery } from "../interfaces/users";
 import { BadRequestError } from "../error/BadRequestError";
 
 const logger = loggerWithNameSpace("User Controller");

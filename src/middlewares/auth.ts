@@ -1,11 +1,11 @@
 import { JsonWebTokenError, verify } from "jsonwebtoken";
 import { NextFunction, Response } from "express";
-import { Request } from "../interface/auth";
+import { Request } from "../interfaces/auth";
 import config from "../config";
 import { UnaunthicatedError } from "../error/UnauthenticatedError";
 import { ForbiddenError } from "../error/ForbiddenError";
 import loggerWithNameSpace from "../utils/logger";
-import { IUser } from "../interface/users";
+import { IUser } from "../interfaces/users";
 
 const logger = loggerWithNameSpace("Auth Middleware");
 
