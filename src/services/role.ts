@@ -1,3 +1,4 @@
+import { NotFoundError } from "../error/NotFoundError";
 import { RoleModel } from "../models/role";
 
 /**
@@ -6,7 +7,21 @@ import { RoleModel } from "../models/role";
  * @returns
  */
 export async function getRoleById(id: string) {
-  const role = await RoleModel.getRoleById(id);
+  const role = (await RoleModel.getRoleById(id))[0].role;
 
-  return role[0].role;
+  if (!role) {
+    throw new NotFoundError("role not found");
+  }
+
+  return role;
+}
+
+export async function getIdByRole(role: string) {
+  const id = (await RoleModel.getIdByRole(role))[0].id;
+
+  if (!id) {
+    throw new NotFoundError("role not found");
+  }
+
+  return id;
 }

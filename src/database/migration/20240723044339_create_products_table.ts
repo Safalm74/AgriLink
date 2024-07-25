@@ -25,6 +25,8 @@ export async function up(knex: Knex): Promise<void> {
 
     table.decimal("quantity").notNullable();
 
+    table.string("quantity_unit", 50).notNullable();
+
     table.string("description", 255).notNullable();
 
     table.string("image_url", 255).notNullable();

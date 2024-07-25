@@ -15,6 +15,7 @@ export default class ProductModel extends BaseModel {
       product_name: product.productName,
       price: product.price,
       quantity: product.quantity,
+      quantityUnit: product.quantityUnit,
       description: product.description,
       image_url: product.imageUrl,
       category: product.category,
@@ -42,6 +43,7 @@ export default class ProductModel extends BaseModel {
         "productName",
         "price",
         "quantity",
+        "quantity_unit",
         "description",
         "imageUrl",
         "category"

@@ -9,7 +9,7 @@ export class UserModel extends BaseModel {
    * @param createdById
    * @returns
    */
-  static async create(user: IUser, createdById: string = "") {
+  static async create(user: IUser) {
     const userToCreate = {
       firstName: user.firstName,
       lastName: user.lastName,
@@ -17,7 +17,6 @@ export class UserModel extends BaseModel {
       phone: user.phone,
       password: user.password,
       roleId: user.roleId,
-      createdBy: createdById,
       address: user.address,
     };
 
@@ -34,7 +33,15 @@ export class UserModel extends BaseModel {
   static get(filter: IGetUserQuery) {
     const { id: id, page, size } = filter;
     const query = this.queryBuilder()
-      .select("id", "email", "first_name", "last_name", "role_id")
+      .select(
+        "id",
+        "email",
+        "first_name",
+        "last_name",
+        "role_id",
+        "address",
+        "phone"
+      )
       .table(this.TABLE_NAME)
       .limit(size!)
       .offset((page! - 1) * size!);
@@ -53,7 +60,16 @@ export class UserModel extends BaseModel {
    */
   static getUserByEmail(email: string) {
     const query = this.queryBuilder()
-      .select("id", "email", "first_name", "last_name", "password", "role_id")
+      .select(
+        "id",
+        "email",
+        "first_name",
+        "last_name",
+        "password",
+        "role_id",
+        "address",
+        "phone"
+      )
       .table(this.TABLE_NAME)
       .where({ email: email });
     return query;

@@ -20,6 +20,10 @@ export const createProductBodySchema = Joi.object({
     "number.base": "Quantity must be atleast a number",
   }),
 
+  quantityUnit: Joi.string().required().messages({
+    "any.required": "Unit is required",
+  }),
+
   description: Joi.string().required().messages({
     "any.required": "Description is required",
   }),
@@ -39,10 +43,13 @@ export const getProductQuerySchema = Joi.object({
 
   farmId: Joi.string().uuid().optional(),
 
-  page: Joi.number().optional().messages({
-    "number.base": "page must be a number",
-    "page.base": "page must be greater than zero",
-  }),
+  page: Joi.number()
+    .optional()
+    .messages({
+      "number.base": "page must be a number",
+      "page.base": "page must be greater than zero",
+    })
+    .default(1),
 
   size: Joi.number()
     .min(1)
@@ -51,7 +58,7 @@ export const getProductQuerySchema = Joi.object({
     .messages({
       "number.base": "size must be a number",
     })
-    .default(5),
+    .default(18),
 }).options({
   stripUnknown: true,
 });

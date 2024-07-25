@@ -18,11 +18,7 @@ export async function createUser(
   try {
     const { body } = req; //getting new user data from request body
 
-    console.log("in user controller", body);
-
-    const req_user = await UserService.createUser(body, req.user!.id);
-
-    console.log("body", body);
+    const req_user = await UserService.createUser(body);
 
     res.status(HttpStatusCode.CREATED).json(req_user);
   } catch (error) {

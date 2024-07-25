@@ -75,6 +75,8 @@ export async function login(body: Pick<IUser, "email" | "password">) {
   //   accessToken: accessToken,
   // } as IUserToken)
 
+  console.log(existingUser);
+
   //returning access and refresh token
   return {
     accessToken: accessToken,
@@ -84,6 +86,8 @@ export async function login(body: Pick<IUser, "email" | "password">) {
       name: existingUser.firstName + " " + existingUser.lastName,
       email: existingUser.email,
       role: await getRoleById(existingUser.roleId),
+      phone: existingUser.phone,
+      address: existingUser.address,
     },
   };
 }

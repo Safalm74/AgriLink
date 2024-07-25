@@ -5,7 +5,7 @@ import { aunthenticate } from "../middlewares/auth";
 const router = express();
 
 //Route to add user
-router.post("/", aunthenticate, UserController.createUser);
+router.post("/", UserController.createUser);
 
 //Route to get user by id
 router.get("/", aunthenticate, UserController.getUsers);

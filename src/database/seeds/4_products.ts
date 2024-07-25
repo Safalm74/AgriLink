@@ -19,6 +19,7 @@ export async function seed(knex: Knex): Promise<void> {
           product_name: "product name 1",
           price: 1,
           quantity: 1,
+          quantity_unit: "KG",
           description: "description 1",
           image_url: "image url 1",
           category: "category 1",

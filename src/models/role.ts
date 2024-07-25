@@ -14,4 +14,17 @@ export class RoleModel extends BaseModel {
       .where({ id: id });
     return query;
   }
+
+  /**
+   *  get id by role
+   * @param role
+   * @returns
+   */
+  static getIdByRole(role: string) {
+    const query = this.queryBuilder()
+      .select("id")
+      .table(this.tableName)
+      .where({ role: role });
+    return query;
+  }
 }

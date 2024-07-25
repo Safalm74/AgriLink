@@ -4,6 +4,7 @@ import { NotFoundError } from "../error/NotFoundError";
 import loggerWithNameSpace from "../utils/logger";
 import { BadRequestError } from "../error/BadRequestError";
 import { IGetUserQuery, IUser } from "../interfaces/users";
+import { getIdByRole, getRoleById } from "./role";
 
 const logger = loggerWithNameSpace("User Service");
 
@@ -13,7 +14,11 @@ const logger = loggerWithNameSpace("User Service");
  * @param createdById
  * @returns
  */
-export async function createUser(user: IUser, createdById: string) {
+export async function createUser(user: IUser) {
+  logger.info("create user");
+
+  let newUser: IUser;
+
   //async for using hash of bcrypt
   logger.info("Attempting to add user");
 
@@ -30,13 +35,20 @@ export async function createUser(user: IUser, createdById: string) {
 
   const password = await bcrypt.hash(user.password, hashSaltValue); //hashing password
 
-  const newUser = {
+  newUser = {
     ...user,
     password,
   };
 
+  if (user.roleId) {
+    newUser = {
+      ...newUser,
+      roleId: await getIdByRole(user.roleId),
+    };
+  }
+
   //creating new user
-  UserModel.UserModel.create(newUser, createdById);
+  UserModel.UserModel.create(newUser);
 
   return { msg: "User Created" };
 }

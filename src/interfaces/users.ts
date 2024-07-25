@@ -6,7 +6,7 @@ export interface IUser {
   password: string;
   phone: string;
   address: string;
-  roleId: number;
+  roleId?: string;
 }
 
 export interface IGetUserQuery {
