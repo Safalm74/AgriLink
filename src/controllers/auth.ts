@@ -24,8 +24,6 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     });
     logger.info("cookies sent");
 
-    console.log(data);
-
     res.status(HttpStatusCode.OK).json({ data });
   } catch (error) {
     next(error);

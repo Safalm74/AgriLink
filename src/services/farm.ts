@@ -51,6 +51,10 @@ export async function getAllFarms() {
   return await FarmModel.getAll();
 }
 
+export async function getFarmId(farmerId: string) {
+  return await FarmModel.getFarmId(farmerId);
+}
+
 /**
  * Function to update farm
  * @param filter

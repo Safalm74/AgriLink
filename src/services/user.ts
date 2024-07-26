@@ -59,7 +59,6 @@ export async function createUser(user: IUser) {
  * @returns
  */
 export async function getUsers(query: IGetUserQuery) {
-  console.log(query);
   return UserModel.UserModel.get(query);
 }
 

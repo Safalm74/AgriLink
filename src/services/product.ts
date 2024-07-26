@@ -3,6 +3,7 @@ import ProductModel from "../models/product";
 import { BadRequestError } from "../error/BadRequestError";
 import { getFarms } from "./farm";
 import { NotFoundError } from "../error/NotFoundError";
+import { getRealUrl } from "./minio";
 
 /**
  * Function to get product
@@ -15,8 +16,16 @@ export async function getProducts(filter: IGetProductQuery) {
   if (farmId && !(await getFarms({ id: farmId, page: 1, size: 1 }))[0]) {
     throw new NotFoundError("Farm not found");
   }
+  const data = await ProductModel.get(filter);
 
-  return ProductModel.get(filter);
+  const newData = await Promise.all(
+    data.map(async (product) => {
+      product.imageUrl = await getRealUrl(product.imageUrl);
+      return product;
+    })
+  );
+
+  return newData;
 }
 
 /**
@@ -25,6 +34,7 @@ export async function getProducts(filter: IGetProductQuery) {
  * @returns
  */
 export function createProduct(product: IProduct) {
+  console.log(product);
   return ProductModel.create(product);
 }
 

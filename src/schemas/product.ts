@@ -92,6 +92,10 @@ export const updateProductBodySchema = Joi.object({
     "number.base": "Quantity must be atleast a number",
   }),
 
+  quantityUnit: Joi.string().required().messages({
+    "any.required": "Unit is required",
+  }),
+
   description: Joi.string().required().messages({
     "any.required": "Description is required",
   }),

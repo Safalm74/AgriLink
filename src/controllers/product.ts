@@ -13,6 +13,8 @@ export async function createProduct(
   try {
     const { body } = req;
 
+    logger.info("Req: create Product");
+
     await productService.createProduct(body);
 
     res.status(httpStatusCode.CREATED).json("create product");

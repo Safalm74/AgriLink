@@ -6,8 +6,9 @@ import bcrypt from "bcrypt";
 import { sign, verify } from "jsonwebtoken";
 import loggerWithNameSpace from "../utils/logger";
 import { AuthModel } from "../models/auth";
-import { IUserToken } from "../interfaces/auth";
+import { IUserDetails, IUserToken } from "../interfaces/auth";
 import { getRoleById } from "./role";
+import { getFarmId } from "./farm";
 
 const logger = loggerWithNameSpace("Auth Service");
 
@@ -69,25 +70,27 @@ export async function login(body: Pick<IUser, "email" | "password">) {
 
   logger.info("Successfully logged in");
 
-  // const tokenIds=await AuthModel.create({
-  //   userId: existingUser.id,
-  //   refreshToken: refreshToken,
-  //   accessToken: accessToken,
-  // } as IUserToken)
+  const role = await getRoleById(existingUser.roleId);
 
-  console.log(existingUser);
+  const userDetails: IUserDetails = {
+    id: existingUser.id,
+    name: existingUser.firstName + " " + existingUser.lastName,
+    email: existingUser.email,
+    role: role,
+    phone: existingUser.phone,
+    address: existingUser.address,
+  };
 
-  //returning access and refresh token
-  return {
+  const responsePayload: IUserToken = {
     accessToken: accessToken,
     refreshToken: refreshToken,
-    userDetails: {
-      id: existingUser.id,
-      name: existingUser.firstName + " " + existingUser.lastName,
-      email: existingUser.email,
-      role: await getRoleById(existingUser.roleId),
-      phone: existingUser.phone,
-      address: existingUser.address,
-    },
+    userDetails: userDetails,
   };
+
+  if (role === "farmer") {
+    responsePayload.farm = await getFarmId(existingUser.id);
+  }
+
+  //returning access and refresh token
+  return responsePayload;
 }
