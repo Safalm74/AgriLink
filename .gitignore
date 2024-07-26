@@ -1,7 +1,9 @@
 node_modules
 dist
-.env
 db_volume
+minio_data
+
+.env
 
 runBackendServer.bat
 runDockerCompose.bat
