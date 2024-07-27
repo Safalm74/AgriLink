@@ -5,6 +5,7 @@ import userRouter from "./user";
 import farmRouter from "./farm";
 import productRouter from "./product";
 import minioRouter from "./minio";
+import cartItemRouter from "./cartItems";
 
 //Creating router object
 const router = express();
@@ -23,5 +24,8 @@ router.use("/product", productRouter);
 
 //Route to handle minio operations
 router.use("/uploadUrl", minioRouter);
+
+//Route to handle cartItem operations
+router.use("/cartItems", cartItemRouter);
 
 export default router;

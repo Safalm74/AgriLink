@@ -3,7 +3,7 @@ import ProductModel from "../models/product";
 import { BadRequestError } from "../error/BadRequestError";
 import { getFarms } from "./farm";
 import { NotFoundError } from "../error/NotFoundError";
-import { getRealUrl } from "./minio";
+import { deleteObject, getReadUrl } from "./minio";
 
 /**
  * Function to get product
@@ -20,7 +20,7 @@ export async function getProducts(filter: IGetProductQuery) {
 
   const newData = await Promise.all(
     data.map(async (product) => {
-      product.imageUrl = await getRealUrl(product.imageUrl);
+      product.imageUrl = await getReadUrl(product.imageUrl);
       return product;
     })
   );
@@ -62,12 +62,24 @@ export async function updateProduct(id: IGetProductQuery, product: IProduct) {
  * @param product
  * @returns
  */
-export function deleteProduct(product: IGetProductQuery) {
+export async function deleteProduct(product: IGetProductQuery) {
   const { id: productId } = product;
 
   if (!productId) {
     throw new BadRequestError("Product Id is required");
   }
+
+  const deletingProduct = (
+    await ProductModel.get({ id: productId, page: 1, size: 1 })
+  )[0];
+
+  console.log(deletingProduct.imageUrl, productId);
+
+  if (!deletingProduct) {
+    throw new NotFoundError("Product not found");
+  }
+
+  await deleteObject(deletingProduct.imageUrl);
 
   return ProductModel.delete(productId);
 }

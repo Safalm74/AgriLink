@@ -1,5 +1,5 @@
 export interface IFarm {
-  id: string;
+  id?: string;
   phone: string;
   userId: string;
   farmName: string;

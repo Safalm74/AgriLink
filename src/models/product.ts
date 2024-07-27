@@ -98,7 +98,9 @@ export default class ProductModel extends BaseModel {
    * @returns
    */
   static async delete(productId: string) {
+    console.log("delete", productId);
     const query = this.queryBuilder()
+      .delete()
       .table(this.tableName)
       .where({ id: productId });
 

@@ -21,7 +21,7 @@ export async function seed(knex: Knex): Promise<void> {
           quantity: 1,
           quantity_unit: "KG",
           description: "description 1",
-          image_url: "ac216329-aed0-4d34-8da2-60556d7ece40",
+          image_url: "00895b62-80d3-4722-b980-8aacd7a146b0",
           category: "category 1",
         },
       ]);
