@@ -28,8 +28,6 @@ export async function createCartItem(cartItem: ICreateCartItemBody) {
     const existingQuantity: number = +existingCartId.quantity;
     if (cartItem.quantity + existingQuantity < maxPossibleProductQuantity) {
       cartItem.quantity = +cartItem.quantity + existingQuantity;
-
-      console.log(cartItem);
     } else {
       cartItem.quantity = maxPossibleProductQuantity;
     }
@@ -71,7 +69,12 @@ export async function deleteCartItem(
     throw new NotFoundError("Product not found");
   }
 
-  const data = await CartItemModel.deleteCartItem(id);
+  const data = await CartItemModel.delete(userId, id);
 
+  return data;
+}
+
+export async function emptyCart(userId: string) {
+  const data = await CartItemModel.delete(userId);
   return data;
 }

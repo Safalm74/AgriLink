@@ -63,11 +63,16 @@ export default class CartItemModel extends BaseModel {
     return query;
   }
 
-  static async deleteCartItem(id: string) {
+  static async delete(userId: string, id?: string) {
     const query = this.queryBuilder()
       .delete()
       .from(this.tableName)
-      .where({ id: id });
+      .where({ userId: userId });
+
+    if (id) {
+      query.where({ id: id });
+    }
+
     return query;
   }
 }
