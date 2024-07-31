@@ -20,6 +20,31 @@ export default class OrdersModel extends BaseModel {
     return await query;
   }
 
+  static async getOrderById(id: string) {
+    const query = this.queryBuilder()
+      .select("*")
+      .table(this.tableName)
+      .where({ id: id });
+
+    return await query;
+  }
+
+  static async getOrderForFarm(filter: IGetOrderQuery, farmId: string) {
+    const query = this.queryBuilder()
+      .select(
+        "id",
+        "customer_id",
+        "farm_id",
+        "order_date",
+        "order_status",
+        "total_price"
+      )
+      .table(this.tableName)
+      .where({ farm_id: farmId });
+
+    return await query;
+  }
+
   static async create(order: IOrders) {
     const orderToCreate = {
       customerId: order.customerId,
@@ -47,6 +72,15 @@ export default class OrdersModel extends BaseModel {
       .where({ id: id })
       .returning("*");
 
+    return await query;
+  }
+
+  static async updateStatus(id: string, status: string) {
+    const query = this.queryBuilder()
+      .update({ orderStatus: status })
+      .table(this.tableName)
+      .where({ id: id })
+      .returning("*");
     return await query;
   }
 

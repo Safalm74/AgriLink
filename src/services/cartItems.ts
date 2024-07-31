@@ -6,10 +6,21 @@ import {
 import CartItemModel from "../models/cartItems";
 import ProductModel from "../models/product";
 
+/**
+ *
+ * @param filter
+ * @param userId
+ * @returns
+ */
 export async function getCartItems(filter: IGetCartItemQuery, userId: string) {
   const data = await CartItemModel.get(filter, userId);
   return data;
 }
+
+/**
+ *
+ * @param cartItem
+ */
 export async function createCartItem(cartItem: ICreateCartItemBody) {
   const { productId, userId } = cartItem;
   const maxPossibleProductQuantity = +(
@@ -17,8 +28,9 @@ export async function createCartItem(cartItem: ICreateCartItemBody) {
   )[0].quantity;
 
   if (!userId || !productId) {
-    throw new Error("User Id is required");
+    throw new NotFoundError("User Id and Product Id is required");
   }
+
   const existingCartId = (await CartItemModel.getCartIdByProductId(
     productId,
     userId!
@@ -26,6 +38,7 @@ export async function createCartItem(cartItem: ICreateCartItemBody) {
 
   if (existingCartId) {
     const existingQuantity: number = +existingCartId.quantity;
+
     if (cartItem.quantity + existingQuantity < maxPossibleProductQuantity) {
       cartItem.quantity = +cartItem.quantity + existingQuantity;
     } else {
@@ -42,39 +55,52 @@ export async function createCartItem(cartItem: ICreateCartItemBody) {
   }
 }
 
+/**
+ *
+ * @param filter
+ * @param cartItem
+ * @param userId
+ * @returns
+ */
 export async function updateCartItem(
-  filter: IGetCartItemQuery,
+  cartItemId: string,
   cartItem: ICreateCartItemBody,
   userId: string
 ) {
-  const { id } = filter;
-  if (!id) {
+  if (!cartItemId) {
     throw new Error("Product Id is required");
   }
-  const data = await CartItemModel.update(id, cartItem, userId);
+
+  const data = await CartItemModel.update(cartItemId, cartItem, userId);
+
   return data;
 }
 
-export async function deleteCartItem(
-  filter: IGetCartItemQuery,
-  userId: string
-) {
-  const { id } = filter;
-
-  if (!id) {
+/**
+ *
+ * @param filter
+ * @param userId
+ * @returns
+ */
+export async function deleteCartItem(cartItemId: string, userId: string) {
+  if (!cartItemId) {
     throw new NotFoundError("Product Id is required");
   }
 
-  if (!(await getCartItems({ id: id }, userId))) {
+  if (!(await getCartItems({ id: cartItemId }, userId))) {
     throw new NotFoundError("Product not found");
   }
 
-  const data = await CartItemModel.delete(userId, id);
+  const data = await CartItemModel.delete(userId, cartItemId);
 
   return data;
 }
 
+/**
+ *
+ * @param userId
+ * @returns
+ */
 export async function emptyCart(userId: string) {
-  const data = await CartItemModel.delete(userId);
-  return data;
+  return await CartItemModel.delete(userId);
 }

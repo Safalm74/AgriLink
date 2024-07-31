@@ -1,12 +1,15 @@
 import * as farmController from "../controllers/farm";
-import { aunthenticate } from "../middlewares/auth";
-import { validateReqBody, validateReqQuery } from "../middlewares/validation";
+import { authenticate, authorize } from "../middlewares/auth";
+import {
+  validateReqBody,
+  validateReqParams,
+  validateReqQuery,
+} from "../middlewares/validation";
 import {
   getFarmQuerySchema,
   createFarmBodySchema,
   updateFarmBodySchema,
-  updateFarmQuerySchema,
-  deleteFarmQuerySchema,
+  farmParamSchema,
 } from "../schemas/farm";
 import express from "express";
 
@@ -16,29 +19,33 @@ const router = express();
 router.post(
   "/",
   validateReqBody(createFarmBodySchema),
-  aunthenticate,
+  authenticate,
+  authorize("farm:post"),
   farmController.createFarm
 );
 
 router.get(
   "/",
   validateReqQuery(getFarmQuerySchema),
-  aunthenticate,
+  authenticate,
+  authorize("farm:get"),
   farmController.getFarms
 );
 
 router.put(
-  "/",
-  validateReqQuery(updateFarmQuerySchema),
+  "/:id",
+  validateReqParams(farmParamSchema),
   validateReqBody(updateFarmBodySchema),
-  aunthenticate,
+  authenticate,
+  authorize("farm:put"),
   farmController.updateFarm
 );
 
 router.delete(
-  "/",
-  validateReqQuery(deleteFarmQuerySchema),
-  aunthenticate,
+  "/:id",
+  validateReqParams(farmParamSchema),
+  authenticate,
+  authorize("farm:delete"),
   farmController.deleteFarm
 );
 

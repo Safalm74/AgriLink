@@ -20,7 +20,7 @@ export async function createFarm(farm: IFarm) {
   const existingUser = (await getUsers({ id: userId, page: 1, size: 1 }))[0];
 
   if (!existingUser) {
-    throw new NotFoundError("farmer not found");
+    throw new NotFoundError("Farmer not found");
   }
 
   const userRole = await getRoleById(existingUser.roleId);
@@ -47,12 +47,20 @@ export async function getFarms(filter: IGetFarmQuery) {
   return await FarmModel.get(filter);
 }
 
+/**
+ * Function to get all farms
+ */
 export async function getAllFarms() {
   return await FarmModel.getAll();
 }
 
-export async function getFarmId(farmerId: string) {
-  return await FarmModel.getFarmId(farmerId);
+/**
+ * get all farms for the user
+ * @param farmerId
+ * @returns
+ */
+export async function getFarmByUserId(farmerId: string) {
+  return await FarmModel.getFarmByUserId(farmerId);
 }
 
 /**
@@ -61,22 +69,12 @@ export async function getFarmId(farmerId: string) {
  * @param farm
  * @returns
  */
-export async function updateFarm(filter: IGetFarmQuery, farm: IFarm) {
-  const { id: farmId } = filter;
-
+export async function updateFarm(farmId: string, farm: IFarm, userId: string) {
   if (!farmId) {
     throw new BadRequestError("Farm Id is required");
   }
 
-  if (!(await getFarms({ id: farmId, page: 1, size: 1 }))[0]) {
-    throw new NotFoundError("Farm not found");
-  }
-
-  console.log(farm, farmId);
-
   const existingFarms = (await getAllFarms()).map((farm) => farm.farmName);
-
-  console.log(existingFarms);
 
   if (existingFarms.includes(farm.farmName)) {
     throw new BadRequestError("Farm name already exists");
@@ -90,8 +88,12 @@ export async function updateFarm(filter: IGetFarmQuery, farm: IFarm) {
  * @param farm
  * @returns
  */
-export async function deleteFarm(farm: IGetFarmQuery) {
-  const { id: farmId } = farm;
+export async function deleteFarm(farmId: string, userId: string) {
+  const userFarms = await getFarmByUserId(userId);
+
+  if (!userFarms.includes(farmId)) {
+    throw new NotFoundError("Farm not found");
+  }
 
   if (!farmId) {
     throw new BadRequestError("Farm Id is required");

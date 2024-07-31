@@ -5,6 +5,12 @@ import httpStatusCode from "http-status-codes";
 
 const logger = loggerWithNameSpace("Product Controller");
 
+/**
+ * controller function to create product
+ * @param req
+ * @param res
+ * @param next
+ */
 export async function createProduct(
   req: Request,
   res: Response,
@@ -23,6 +29,12 @@ export async function createProduct(
   }
 }
 
+/**
+ * controller function to get products
+ * @param req
+ * @param res
+ * @param next
+ */
 export async function getProducts(
   req: Request,
   res: Response,
@@ -39,15 +51,22 @@ export async function getProducts(
   }
 }
 
+/**
+ * controller function to update product
+ * @param req
+ * @param res
+ * @param next
+ */
 export async function updateProduct(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   try {
-    const { body, query } = req;
+    const { body } = req;
+    const productId = req.params.id;
 
-    await productService.updateProduct(query, body);
+    await productService.updateProduct(productId, body);
 
     res.status(httpStatusCode.OK).json("update product");
   } catch (error) {
@@ -55,15 +74,21 @@ export async function updateProduct(
   }
 }
 
+/**
+ * controller function to delete product
+ * @param req
+ * @param res
+ * @param next
+ */
 export async function deleteProduct(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   try {
-    const query = req.query;
+    const productId = req.params.id;
 
-    await productService.deleteProduct(query);
+    await productService.deleteProduct(productId);
 
     res.status(httpStatusCode.NO_CONTENT).json("delete product");
   } catch (error) {

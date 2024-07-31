@@ -17,14 +17,16 @@ export async function up(knex: Knex): Promise<void> {
       .notNullable()
       .references("id")
       .inTable("orders")
-      .onDelete("CASCADE");
+      .onDelete("NO ACTION")
+      .onUpdate("NO ACTION");
 
     table
       .uuid("product_id")
       .notNullable()
       .references("id")
       .inTable("products")
-      .onDelete("CASCADE");
+      .onDelete("NO ACTION")
+      .onUpdate("NO ACTION");
 
     table.decimal("quantity").notNullable();
 

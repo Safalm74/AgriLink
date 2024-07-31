@@ -1,22 +1,23 @@
 import minioClient, { bucketName } from "../miniofile";
 import { v4 as uuid } from "uuid";
-
-export function presignedPutObject(bucketName: string, fileName: string) {
-  return minioClient.presignedPutObject(bucketName, fileName, 5 * 60);
-}
+import config from "../config";
 
 export async function getUploadUrl() {
   const uuidName = uuid();
   const url = await minioClient.presignedPutObject(
     bucketName,
     uuidName,
-    5 * 60
+    config.minio.PUT_TIME
   );
   return { url: url, fileName: uuidName, bucketName: bucketName };
 }
 
 export async function getReadUrl(fileName: string) {
-  return minioClient.presignedGetObject(bucketName, fileName, 5 * 60);
+  return minioClient.presignedGetObject(
+    bucketName,
+    fileName,
+    config.minio.GET_TIME
+  );
 }
 
 export async function deleteObject(fileName: string) {

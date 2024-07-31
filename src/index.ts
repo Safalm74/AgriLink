@@ -32,7 +32,12 @@ app.use(cookieParser());
 app.use(requestLogger);
 
 //Middleware to enable cors
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 //use main router
 app.use(Router);

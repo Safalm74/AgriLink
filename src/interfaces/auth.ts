@@ -5,11 +5,18 @@ export interface Request extends expressRequest {
   user?: Omit<IUser, "password">;
 }
 
+export interface ITokenPlayload {
+  id: string;
+  name: string;
+  email: string;
+  roleId: string;
+}
+
 export interface IUserToken {
   userDetails: IUserDetails;
   refreshToken: string;
   accessToken: string;
-  farm?: IfarmIdAndName[];
+  farm?: IFarmIdAndName[];
 }
 
 export interface IUserDetails {
@@ -21,7 +28,7 @@ export interface IUserDetails {
   address: string;
 }
 
-interface IfarmIdAndName {
+interface IFarmIdAndName {
   id: string;
   name: string;
 }

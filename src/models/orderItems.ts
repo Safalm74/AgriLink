@@ -17,6 +17,7 @@ export default class OrderItemsModel extends BaseModel {
     if (orderId) {
       query.where({ order_id: orderId });
     }
+
     return await query;
   }
 

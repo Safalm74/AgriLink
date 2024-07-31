@@ -1,7 +1,6 @@
-import { Knex } from 'knex';
+import { Knex } from "knex";
 
-const TABLE_NAME = 'users';
-
+const TABLE_NAME = "users";
 
 /**
  * Create table TABLE_NAME.
@@ -11,31 +10,36 @@ const TABLE_NAME = 'users';
  */
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable(TABLE_NAME, (table) => {
-    table.uuid('id').defaultTo(knex.raw('gen_random_uuid()')).primary();
+    table.uuid("id").defaultTo(knex.raw("gen_random_uuid()")).primary();
 
-    table.string('first_name').notNullable();
-    table.string('last_name').notNullable();
-    table.string('email').notNullable();
-    table.string('password').notNullable();
-    table.string('phone').notNullable();
-    table.string('address').notNullable();
-    table.uuid('role').notNullable().references('id').inTable('roles').onDelete('CASCADE');
-
-    table.timestamp('created_at').notNullable().defaultTo(knex.raw('now()'));
-    
+    table.string("first_name").notNullable();
+    table.string("last_name").notNullable();
+    table.string("email").notNullable();
+    table.string("password").notNullable();
+    table.string("phone").notNullable();
+    table.string("address").notNullable();
     table
-      .uuid('created_by')
+      .uuid("role_id")
+      .notNullable()
+      .references("id")
+      .inTable("roles")
+      .onDelete("CASCADE");
+
+    table.timestamp("created_at").notNullable().defaultTo(knex.raw("now()"));
+
+    table
+      .uuid("created_by")
       .unsigned()
       .nullable()
-      .references('id')
+      .references("id")
       .inTable(TABLE_NAME);
-      
-    table.timestamp('updated_at').nullable();
-    
+
+    table.timestamp("updated_at").nullable();
+
     table
-      .uuid('updated_by')
+      .uuid("updated_by")
       .unsigned()
-      .references('id')
+      .references("id")
       .inTable(TABLE_NAME)
       .nullable();
   });

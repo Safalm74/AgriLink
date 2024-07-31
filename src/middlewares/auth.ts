@@ -2,15 +2,25 @@ import { JsonWebTokenError, verify } from "jsonwebtoken";
 import { NextFunction, Response } from "express";
 import { Request } from "../interfaces/auth";
 import config from "../config";
-import { UnaunthicatedError } from "../error/UnauthenticatedError";
+import { UnauthicatedError } from "../error/UnauthenticatedError";
 import { ForbiddenError } from "../error/ForbiddenError";
 import loggerWithNameSpace from "../utils/logger";
 import { IUser } from "../interfaces/users";
+import { JWTExpiredError } from "../error/JWTExpiredError";
+import { JWTMalformed } from "../error/JWTMalformed";
+import { JWTInvalidSignatureError } from "../error/JWTInvalidSignatureError";
+import { getPermissionForRole } from "../services/rolesAndPermissions";
 
 const logger = loggerWithNameSpace("Auth Middleware");
 
-//middleware function to Aunthenticate
-export function aunthenticate(req: Request, res: Response, next: NextFunction) {
+/**
+ * middleware function to Authenticate
+ * @param req
+ * @param res
+ * @param next
+ * @returns
+ */
+export function authenticate(req: Request, res: Response, next: NextFunction) {
   logger.info("Authenticating user by email");
 
   //extracting authorization from request header
@@ -20,7 +30,7 @@ export function aunthenticate(req: Request, res: Response, next: NextFunction) {
   //checking if token is provided in authorization
   if (!authorization) {
     logger.error("No token provided");
-    next(new UnaunthicatedError("Un-Aunthenticated"));
+    next(new UnauthicatedError("Un-Authenticated"));
   }
 
   /*
@@ -35,7 +45,7 @@ export function aunthenticate(req: Request, res: Response, next: NextFunction) {
 
   if (token?.length !== 2 || token[0] !== "Bearer") {
     logger.error("Invalid token");
-    next(new UnaunthicatedError("Un-Aunthenticated"));
+    next(new UnauthicatedError("Un-Authenticated"));
 
     return;
   }
@@ -51,36 +61,54 @@ export function aunthenticate(req: Request, res: Response, next: NextFunction) {
 
     req.user = user;
 
-    //to next fuction of route
     next();
   } catch (error) {
-    logger.error("Token verification failed");
+    if (error instanceof JsonWebTokenError) {
+      if (error.message === "invalid signature") {
+        logger.error("Invalid Signature");
+        next(new JWTInvalidSignatureError("Un-Authenticated"));
+      }
 
-    next(error);
+      if (error.message === "jwt malformed") {
+        logger.error("Invalid token");
+        next(new JWTMalformed("Un-Authenticated"));
+      }
+
+      if (error.message === "jwt expired") {
+        logger.error("Token Expired");
+        next(new JWTExpiredError("Token Expired"));
+      }
+    } else {
+      next(error);
+    }
   }
 }
 
-// //middleware function to Authorize
-// export function authorize(permission: string) {
-//   return async (req: Request, res: Response, next: NextFunction) => {
-//     const user = req.user!;
+/**
+ * middleware function to Authorize
+ * @param permission
+ * @returns
+ */
+export function authorize(permission: string) {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user!;
 
-//     const permissions = (await getPermissionForRole(`${user.role_id}`)).map(
-//       ({ permissions }) => permissions
-//     );
+    const permissions = (await getPermissionForRole(`${user.roleId}`)).map(
+      ({ permissions }) => permissions
+    );
 
-//     logger.info(`Checking permissions for user: ${user.id}`);
+    logger.info(`Checking permissions for user: ${user.id}`);
 
-//     //checking if permision required includes for user
-//     if (!permissions.includes(permission)) {
-//       logger.error("Permission not granted");
+    //checking if permission required includes for user
+    if (!permissions.includes(permission)) {
+      logger.error("Permission not granted");
 
-//       next(new ForbiddenError("Forbidden"));
+      next(new ForbiddenError("Forbidden"));
 
-//       return;
-//     }
-//     logger.info("Authorized");
+      return;
+    }
+    logger.info("Authorized");
 
-//     next();
-//   };
-// }
+    next();
+  };
+}

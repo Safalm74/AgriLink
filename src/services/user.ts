@@ -4,7 +4,9 @@ import { NotFoundError } from "../error/NotFoundError";
 import loggerWithNameSpace from "../utils/logger";
 import { BadRequestError } from "../error/BadRequestError";
 import { IGetUserQuery, IUser } from "../interfaces/users";
-import { getIdByRole, getRoleById } from "./role";
+import { getIdByRole } from "./role";
+import { IFarm } from "../interfaces/farm";
+import FarmModel from "../models/farm";
 
 const logger = loggerWithNameSpace("User Service");
 
@@ -22,7 +24,7 @@ export async function createUser(user: IUser) {
   //async for using hash of bcrypt
   logger.info("Attempting to add user");
 
-  logger.info(`comparing incomming email with existing emails`);
+  logger.info(`comparing incoming email with existing emails`);
 
   //to prevent multiple user with same email
   if ((await UserModel.UserModel.getUserByEmail(user.email)).length !== 0) {
@@ -72,23 +74,73 @@ export function getUserByEmail(email: string) {
   return UserModel.UserModel.getUserByEmail(email);
 }
 
+export async function updateUser(id: string, user: IUser) {
+  const existingUser = (await getUsers({ id: id }))[0];
+
+  if (!existingUser) {
+    throw new NotFoundError("user not found");
+  }
+
+  return UserModel.UserModel.update(id, user);
+}
+
+export async function changeCustomerToFarmer(
+  id: string,
+  farmDetails: Omit<IFarm, "userId">
+) {
+  logger.info("Attempting to change customer to farmer");
+
+  const existingUser = (await getUsers({ id: id }))[0];
+
+  if (!existingUser) {
+    throw new NotFoundError("user not found");
+  }
+
+  const farmToCreate: IFarm = {
+    userId: existingUser.id,
+    ...farmDetails,
+  };
+
+  const farmerRoleId = await getIdByRole("farmer");
+
+  if (existingUser.roleId === farmerRoleId) {
+    throw new BadRequestError("user is already farmer");
+  }
+
+  logger.info("Changing customer to farmer");
+
+  const data = await UserModel.UserModel.updateRole(id, farmerRoleId);
+
+  logger.info("Updating farm details");
+
+  await FarmModel.create(farmToCreate);
+
+  return data;
+}
+
 /**
  * service to handle delete user
  * @param UserId
  * @returns
  */
-export async function deleteUser(UserId: string) {
+export async function deleteUser(userId: string) {
   logger.info("Attempting to delete user by id");
 
-  const data = await UserModel.UserModel.get({ id: UserId, page: 1, size: 1 });
+  if (!userId) {
+    throw new BadRequestError("id is required");
+  }
 
-  if (data.length === 0) {
+  const existingUser = (
+    await UserModel.UserModel.get({ id: userId, page: 1, size: 1 })
+  )[0];
+
+  if (!existingUser) {
     logger.error("user not found");
 
     throw new NotFoundError("user not found");
   }
 
-  UserModel.UserModel.delete(UserId);
+  UserModel.UserModel.delete(userId);
 
-  return { msg: `User Deleted: ${UserId}` };
+  return { msg: `User Deleted: ${userId}` };
 }

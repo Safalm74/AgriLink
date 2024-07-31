@@ -3,12 +3,17 @@ import httpStatusCode from "http-status-codes";
 import { NextFunction, Response } from "express";
 import { Request } from "../interfaces/auth";
 
+/**
+ * controllers to create cart items
+ * @param req
+ * @param res
+ * @param next
+ */
 export async function createCartItem(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  console.log(req.user);
   try {
     const { body } = req;
     const userId = req.user!.id;
@@ -24,6 +29,12 @@ export async function createCartItem(
   }
 }
 
+/**
+ * controller to get cart items
+ * @param req
+ * @param res
+ * @param next
+ */
 export async function getCartItems(
   req: Request,
   res: Response,
@@ -41,16 +52,27 @@ export async function getCartItems(
   }
 }
 
+/**
+ * controller to update cart items
+ * @param req
+ * @param res
+ * @param next
+ */
 export async function updateCartItem(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   try {
-    const { body, query } = req;
+    const { body } = req;
+    const cartItemId = req.params.id;
     const userId = req.user!.id!;
 
-    const cartItem = await cartItemsService.updateCartItem(query, body, userId);
+    const cartItem = await cartItemsService.updateCartItem(
+      cartItemId,
+      body,
+      userId
+    );
 
     res.status(httpStatusCode.OK).json(cartItem);
   } catch (error) {
@@ -58,16 +80,22 @@ export async function updateCartItem(
   }
 }
 
+/**
+ * controller to delete cart items
+ * @param req
+ * @param res
+ * @param next
+ */
 export async function deleteCartItem(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   try {
-    const { query } = req;
+    const cartItemId = req.params.id;
     const userId = req.user!.id!;
 
-    const cartItem = await cartItemsService.deleteCartItem(query, userId);
+    const cartItem = await cartItemsService.deleteCartItem(cartItemId, userId);
 
     res.status(httpStatusCode.NO_CONTENT).json(cartItem);
   } catch (error) {

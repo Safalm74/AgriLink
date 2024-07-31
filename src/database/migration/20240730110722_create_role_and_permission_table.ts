@@ -1,6 +1,6 @@
 import { Knex } from "knex";
 
-const TABLE_NAME = "orders";
+const TABLE_NAME = "roles_and_permissions";
 
 /**
  * Create table TABLE_NAME.
@@ -13,27 +13,18 @@ export async function up(knex: Knex): Promise<void> {
     table.uuid("id").defaultTo(knex.raw("gen_random_uuid()")).primary();
 
     table
-      .uuid("customer_id")
+      .uuid("role_id")
       .notNullable()
       .references("id")
-      .inTable("users")
-      .onDelete("NO ACTION")
-      .onUpdate("NO ACTION");
+      .inTable("roles")
+      .onDelete("CASCADE");
 
     table
-      .uuid("farm_id")
-      .unsigned()
+      .bigInteger("permission_id")
       .notNullable()
       .references("id")
-      .inTable("farms")
-      .onDelete("NO ACTION")
-      .onUpdate("NO ACTION");
-
-    table.timestamp("order_date").notNullable().defaultTo(knex.raw("now()"));
-
-    table.string("order_status", 50).notNullable().defaultTo("pending");
-
-    table.decimal("total_price").nullable();
+      .inTable("permissions")
+      .onDelete("CASCADE");
   });
 }
 

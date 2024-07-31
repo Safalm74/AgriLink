@@ -1,9 +1,5 @@
 import * as minioClientModel from "../models/minio";
 
-export function presignedPutObject(bucketName: string, fileName: string) {
-  return minioClientModel.presignedPutObject(bucketName, fileName);
-}
-
 export async function getUploadUrl() {
   return minioClientModel.getUploadUrl();
 }

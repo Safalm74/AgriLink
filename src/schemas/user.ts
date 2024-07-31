@@ -1,8 +1,15 @@
 import Joi from "joi";
 
+//Schema to get id from params
+export const userParamSchema = Joi.object({
+  id: Joi.string().uuid().required().messages({
+    "any.required": "Id is required",
+  }),
+});
+
 //Schema to get user
 export const getUserQuerySchema = Joi.object({
-  id: Joi.string().optional(),
+  id: Joi.string().uuid().optional(),
 
   page: Joi.number().optional().messages({
     "number.base": "page must be a number",
@@ -23,14 +30,17 @@ export const getUserQuerySchema = Joi.object({
 
 //Schema to create user
 export const createUserBodySchema = Joi.object({
-  name: Joi.string().required().messages({
-    "any.required": "Name is required",
+  firstName: Joi.string().required().messages({
+    "any.required": "First name is required",
   }),
-  role_id: Joi.number()
+  lastName: Joi.string().required().messages({
+    "any.required": "Last name is required",
+  }),
+  roleId: Joi.string()
     .required()
     .messages({
       "any.required": "role is required",
-      "role.not_defined": "Possible roles: super_user and user",
+      //"role.not_defined": "Possible roles: super_user and user",
     })
     .custom((value, helpers) => {
       //   if (!roles.includes(value)) {
@@ -40,18 +50,25 @@ export const createUserBodySchema = Joi.object({
       return value;
     }),
   email: Joi.string().email().required().messages({
-    "strng.email": "Email must be a valid format",
+    "string.email": "Email must be a valid format",
     "any.required": "Email is required",
+  }),
+
+  phone: Joi.string().required().messages({
+    "any.required": "phone is required",
+  }),
+  address: Joi.string().required().messages({
+    "any.required": "address is required",
   }),
   password: Joi.string()
     .min(8)
     .required()
     .messages({
-      "any.required": "Pasword is required",
-      "string.min": "Password must be atleast of 8 character",
-      "password.uppercase": "Password must contain atleast a uppercase",
-      "password.lowercase": "Password must contain atleast a lowercase",
-      "password.special": "Password must contain atleast a special character",
+      "any.required": "Password is required",
+      "string.min": "Password must be at least of 8 character",
+      "password.uppercase": "Password must contain at least a uppercase",
+      "password.lowercase": "Password must contain at least a lowercase",
+      "password.special": "Password must contain at least a special character",
     })
     .custom((value, helpers) => {
       if (!/[A-Z]/.test(value)) {
@@ -74,14 +91,17 @@ export const createUserBodySchema = Joi.object({
 
 //Schema to update user
 export const updateUserBodySchema = Joi.object({
-  name: Joi.string().optional().messages({
-    "any.required": "Name is required",
+  firstName: Joi.string().optional().messages({
+    "any.required": "First name is required",
   }),
-  role_id: Joi.number()
+  lastName: Joi.string().optional().messages({
+    "any.required": "Last name is required",
+  }),
+  roleId: Joi.string()
     .optional()
     .messages({
       "any.required": "role is required",
-      "role.not_defined": "Possible roles: super_user:1 and user:2",
+      //"role.not_defined": "Possible roles: super_user and user",
     })
     .custom((value, helpers) => {
       //   if (!roles.includes(value)) {
@@ -91,18 +111,25 @@ export const updateUserBodySchema = Joi.object({
       return value;
     }),
   email: Joi.string().email().optional().messages({
-    "strng.email": "Email must be a valid format",
+    "string.email": "Email must be a valid format",
     "any.required": "Email is required",
+  }),
+
+  phone: Joi.string().optional().messages({
+    "any.required": "phone is required",
+  }),
+  address: Joi.string().optional().messages({
+    "any.required": "address is required",
   }),
   password: Joi.string()
     .min(8)
     .optional()
     .messages({
-      "any.required": "Pasword is required",
-      "string.min": "Password must be atleast of 8 character",
-      "password.uppercase": "Password must contain atleast a uppercase",
-      "password.lowercase": "Password must contain atleast a lowercase",
-      "password.special": "Password must contain atleast a special character",
+      "any.required": "Password is required",
+      "string.min": "Password must be at least of 8 character",
+      "password.uppercase": "Password must contain at least a uppercase",
+      "password.lowercase": "Password must contain at least a lowercase",
+      "password.special": "Password must contain at least a special character",
     })
     .custom((value, helpers) => {
       if (!/[A-Z]/.test(value)) {
@@ -119,6 +146,18 @@ export const updateUserBodySchema = Joi.object({
 
       return value;
     }),
+}).options({
+  stripUnknown: true,
+});
+
+//Schema to change user to farmer
+export const changeCustomerToFarmerBodySchema = Joi.object({
+  farmName: Joi.string().required().messages({
+    "any.required": "Farm Name is required",
+  }),
+  farmAddress: Joi.string().required().messages({
+    "any.required": "Farm Address is required",
+  }),
 }).options({
   stripUnknown: true,
 });

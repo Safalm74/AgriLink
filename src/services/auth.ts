@@ -1,14 +1,13 @@
 import config from "../config";
-import { UnaunthicatedError } from "../error/UnauthenticatedError";
+import { UnauthicatedError } from "../error/UnauthenticatedError";
 import { IUser } from "../interfaces/users";
 import { getUserByEmail } from "./user";
 import bcrypt from "bcrypt";
 import { sign, verify } from "jsonwebtoken";
 import loggerWithNameSpace from "../utils/logger";
-import { AuthModel } from "../models/auth";
-import { IUserDetails, IUserToken } from "../interfaces/auth";
+import { ITokenPlayload, IUserDetails, IUserToken } from "../interfaces/auth";
 import { getRoleById } from "./role";
-import { getFarmId } from "./farm";
+import { getFarmByUserId } from "./farm";
 
 const logger = loggerWithNameSpace("Auth Service");
 
@@ -26,11 +25,11 @@ export async function login(body: Pick<IUser, "email" | "password">) {
 
   //checking if user exists
   if (!existingUser) {
-    logger.error("requested user doesnot exist");
+    logger.error("requested user does not exist");
 
-    throw new UnaunthicatedError("Invalid email or password");
+    throw new UnauthicatedError("Invalid email or password");
   }
-  //comparing hashed password with incomming password
+  //comparing hashed password with incoming password
   logger.info("Checking password");
 
   const isValidPassword = await bcrypt.compare(
@@ -40,19 +39,19 @@ export async function login(body: Pick<IUser, "email" | "password">) {
 
   //checking if password entered is correct
   if (!isValidPassword) {
-    logger.error("password doesnot match");
+    logger.error("password does not match");
 
-    throw new UnaunthicatedError("Invalid email or password");
+    throw new UnauthicatedError("Invalid email or password");
   }
 
   logger.info("creating payload");
 
   //creating payload to generate tokens
-  const payload = {
+  const payload: ITokenPlayload = {
     id: existingUser.id,
     name: existingUser.first_name + " " + existingUser.last_name,
     email: existingUser.email,
-    role_id: existingUser.roleId,
+    roleId: existingUser.roleId,
   };
 
   //generating access token using config jwt secret
@@ -64,8 +63,9 @@ export async function login(body: Pick<IUser, "email" | "password">) {
 
   //generating refresh token using config jwt secret
   logger.info("creating refresh token");
+
   const refreshToken = await sign(payload, config.jwt.jwt_secret!, {
-    expiresIn: config.jwt.refrehTokenExpiryS,
+    expiresIn: config.jwt.refreshTokenExpiryS,
   });
 
   logger.info("Successfully logged in");
@@ -88,9 +88,60 @@ export async function login(body: Pick<IUser, "email" | "password">) {
   };
 
   if (role === "farmer") {
-    responsePayload.farm = await getFarmId(existingUser.id);
+    responsePayload.farm = await getFarmByUserId(existingUser.id);
   }
 
   //returning access and refresh token
   return responsePayload;
+}
+
+/**
+ * Service function to generate new access token from valid refresh token
+ * @param RefreshToken
+ * @returns
+ */
+export async function refreshAccessToken(RefreshToken: string) {
+  const token = RefreshToken.split(" ");
+
+  /*
+    the incoming token must have format of:
+      "Bearer <token>"
+    to ensure this, 
+    refresh token is splitted by (" ")
+    then checked if token[0]==="Bearer"
+    and splitted token is of length 2
+  */
+  if (token?.length !== 2 || token[0] !== "Bearer") {
+    logger.error(`token format mismatch: ${token}`);
+
+    throw new UnauthicatedError("Un-Authenticated");
+  }
+
+  logger.info(`Verifying refresh token`);
+  //JWT verify verifies the token and returns decoded token  if verified
+  const existingUserPayload = verify(
+    token[1],
+    config.jwt.jwt_secret!
+  ) as ITokenPlayload;
+
+  //creating payload to generate new access token
+  logger.info("creating payload");
+
+  //creating payload to generate tokens
+  const payload: ITokenPlayload = {
+    id: existingUserPayload.id,
+    name: existingUserPayload.name,
+    email: existingUserPayload.email,
+    roleId: existingUserPayload.roleId,
+  };
+
+  //generating access token using config jwt secret
+  logger.info("creating access token");
+
+  const accessToken = await sign(payload, config.jwt.jwt_secret!, {
+    expiresIn: config.jwt.accessTokenExpiryS,
+  });
+
+  //returning access token
+  return { accessToken: accessToken };
 }

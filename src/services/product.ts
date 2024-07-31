@@ -34,7 +34,6 @@ export async function getProducts(filter: IGetProductQuery) {
  * @returns
  */
 export function createProduct(product: IProduct) {
-  console.log(product);
   return ProductModel.create(product);
 }
 
@@ -44,9 +43,7 @@ export function createProduct(product: IProduct) {
  * @param product
  * @returns
  */
-export async function updateProduct(id: IGetProductQuery, product: IProduct) {
-  const { id: productId } = id;
-
+export async function updateProduct(productId: string, product: IProduct) {
   if (!productId) {
     throw new BadRequestError("Product Id is required");
   }
@@ -62,9 +59,7 @@ export async function updateProduct(id: IGetProductQuery, product: IProduct) {
  * @param product
  * @returns
  */
-export async function deleteProduct(product: IGetProductQuery) {
-  const { id: productId } = product;
-
+export async function deleteProduct(productId: string) {
   if (!productId) {
     throw new BadRequestError("Product Id is required");
   }
@@ -72,8 +67,6 @@ export async function deleteProduct(product: IGetProductQuery) {
   const deletingProduct = (
     await ProductModel.get({ id: productId, page: 1, size: 1 })
   )[0];
-
-  console.log(deletingProduct.imageUrl, productId);
 
   if (!deletingProduct) {
     throw new NotFoundError("Product not found");

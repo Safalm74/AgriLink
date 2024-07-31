@@ -1,7 +1,6 @@
-import { Knex } from 'knex';
+import { Knex } from "knex";
 
-const TABLE_NAME = 'refresh_tokens';
-
+const TABLE_NAME = "permissions";
 
 /**
  * Create table TABLE_NAME.
@@ -11,10 +10,9 @@ const TABLE_NAME = 'refresh_tokens';
  */
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable(TABLE_NAME, (table) => {
+    table.bigIncrements();
 
-    table.uuid('id').defaultTo(knex.raw('gen_random_uuid()')).primary();
-    table.uuid('user_id').notNullable().references('id').inTable('users').onDelete('CASCADE');
-    table.string('refresh_token').notNullable();
+    table.string("permissions", 100).notNullable().unique();
   });
 }
 

@@ -13,8 +13,6 @@ export default class CartItemModel extends BaseModel {
       user_id: cartItem.userId,
       quantity: cartItem.quantity,
     };
-
-    console.log("in model", cartItemToCreate);
     const query = this.queryBuilder()
       .insert(cartItemToCreate)
       .into(this.tableName);
@@ -22,7 +20,6 @@ export default class CartItemModel extends BaseModel {
   }
 
   static async get(filter: IGetCartItemQuery, userId: string) {
-    console.log(userId, filter);
     const { id: id, page, size } = filter;
     const query = this.queryBuilder()
       .select("id", "product_id", "quantity")

@@ -6,7 +6,7 @@ export interface IGetOrderQuery {
   size?: number;
 }
 
-interface IorderItem {
+interface IOrderItem {
   productId: string;
   quantity: number;
   unitPrice: number;
@@ -16,7 +16,7 @@ export interface ICreateOrderBody {
   id?: string;
   customerId: string;
   farmId: string;
-  orderItems: IorderItem[];
+  orderItems: IOrderItem[];
   totalPrice?: number;
 }
 
@@ -27,4 +27,12 @@ export interface IOrders {
   totalPrice: number;
   orderDate?: Date;
   orderStatus?: string;
+}
+
+export interface IUpdateOrderStatus {
+  orderStatus: string;
+}
+
+export interface IOrderForFarmer extends IOrders {
+  customerName: string;
 }

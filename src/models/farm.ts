@@ -31,7 +31,7 @@ export default class FarmModel extends BaseModel {
   static async get(filter: IGetFarmQuery) {
     const { id: id, page, size } = filter;
     const query = this.queryBuilder()
-      .select("id", "farm_name", "farm_address")
+      .select("id", "farm_name", "farm_address", "user_id")
       .table(this.tableName)
       .limit(size!)
       .offset((page! - 1) * size!);
@@ -51,7 +51,7 @@ export default class FarmModel extends BaseModel {
     return query;
   }
 
-  static async getFarmId(farmerId: string) {
+  static async getFarmByUserId(farmerId: string) {
     const query = this.queryBuilder()
       .select("id", "farm_name")
       .table(this.tableName)
@@ -70,13 +70,13 @@ export default class FarmModel extends BaseModel {
       farm_name: farm.farmName,
       farm_address: farm.farmAddress,
     };
-    const qurey = this.queryBuilder()
+    const query = this.queryBuilder()
       .update(farmToUpdate)
       .table(this.tableName)
       .where({ id: farmId })
       .returning("id");
 
-    return await qurey;
+    return await query;
   }
 
   /**

@@ -5,51 +5,120 @@ import {
   ICreateOrderBody,
   IGetOrderQuery,
   IOrders,
+  IUpdateOrderStatus,
 } from "../interfaces/orders";
 import httpStatusCode from "http-status-codes";
 
+/**
+ * Controller function to get orders
+ * @param req
+ * @param res
+ * @param next
+ */
 export async function getOrders(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  const userId = req.user!.id!;
-  const data = await orderService.getOrders(userId);
+  try {
+    const userId = req.user!.id!;
 
-  res.status(httpStatusCode.OK).json(data);
+    const data = await orderService.getOrders(userId);
+
+    res.status(httpStatusCode.OK).json(data);
+  } catch (error) {
+    next(error);
+  }
 }
 
+/**
+ * controller function to get orders for the farm
+ * @param req
+ * @param res
+ * @param next
+ */
+export async function getOrderForFarm(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const filter = req.query as IGetOrderQuery;
+    const userId = req.user!.id!;
+
+    const data = await orderService.getOrderForFarm(filter, userId);
+
+    res.status(httpStatusCode.OK).json(data);
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Controller function to create orders
+ * @param req
+ * @param res
+ * @param next
+ */
 export async function createOrder(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  const userId = req.user!.id!;
-  const order = { ...req.body, customerId: userId } as ICreateOrderBody;
-  const data = await orderService.createOrder(order);
+  try {
+    const userId = req.user!.id!;
+    const order = { ...req.body, customerId: userId } as ICreateOrderBody;
 
-  res.status(httpStatusCode.CREATED).json(data);
+    const data = await orderService.createOrder(order);
+
+    res.status(httpStatusCode.CREATED).json(data);
+  } catch (error) {
+    next(error);
+  }
 }
 
-export async function updateOrder(
+/**
+ * controller function to update order status
+ * @param req
+ * @param res
+ * @param next
+ */
+export async function updateOrderStatus(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  const filter = req.query as IGetOrderQuery;
-  const order = req.body as IOrders;
-  const data = await orderService.updateOrder(filter, order);
+  try {
+    const id = req.params.id;
+    const orderStatus = req.body as IUpdateOrderStatus;
 
-  res.status(httpStatusCode.OK).json(data);
+    const data = await orderService.updateOrderStatus(id, orderStatus);
+
+    res.status(httpStatusCode.OK).json(data);
+  } catch (error) {
+    next(error);
+  }
 }
 
+/**
+ * controller function to delete order
+ * @param req
+ * @param res
+ * @param next
+ */
 export async function deleteOrder(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  const filter = req.query as IGetOrderQuery;
-  const data = await orderService.deleteOrder(filter);
+  try {
+    const id = req.params.id;
+    const userId = req.user!.id;
 
-  res.status(httpStatusCode.NO_CONTENT).json(data);
+    const data = await orderService.deleteOrder(id, userId!);
+
+    res.status(httpStatusCode.NO_CONTENT).json(data);
+  } catch (error) {
+    next(error);
+  }
 }

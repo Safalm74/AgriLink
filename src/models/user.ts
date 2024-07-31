@@ -75,20 +75,35 @@ export class UserModel extends BaseModel {
     return query;
   }
 
-  // static async update(id:string,user:IUser){
-  //   const userToUpdate={
-  //     name:user.name,
-  //     email:user.email,
-  //     password:user.password,
-  //     updated_at:new Date()
-  //   }
+  static async update(id: string, user: IUser) {
+    const userToUpdate = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+      address: user.address,
+      password: user.password,
+      updated_at: new Date(),
+    };
 
-  //   const query =this.queryBuilder().update(userToUpdate).table(this.TABLE_NAME).where({id});
+    const query = this.queryBuilder()
+      .update(userToUpdate)
+      .table(this.TABLE_NAME)
+      .where({ id });
 
-  //   await query;
+    await query;
 
-  //   return;
-  // }
+    return;
+  }
+
+  static async updateRole(id: string, roleId: string) {
+    const query = this.queryBuilder()
+      .update({ role_id: roleId })
+      .table(this.TABLE_NAME)
+      .where({ id });
+
+    return await query;
+  }
 
   /**
    * deletes user

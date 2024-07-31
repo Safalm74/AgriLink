@@ -1,14 +1,17 @@
 import express from "express";
 import * as productController from "../controllers/product";
-import { validateReqBody, validateReqQuery } from "../middlewares/validation";
+import {
+  validateReqBody,
+  validateReqParams,
+  validateReqQuery,
+} from "../middlewares/validation";
 import {
   createProductBodySchema,
   getProductQuerySchema,
-  updateProductQuerySchema,
   updateProductBodySchema,
-  deleteProductQuerySchema,
+  productParamSchema,
 } from "../schemas/product";
-import { aunthenticate } from "../middlewares/auth";
+import { authenticate, authorize } from "../middlewares/auth";
 
 const router = express();
 
@@ -16,7 +19,8 @@ const router = express();
 router.post(
   "/",
   validateReqBody(createProductBodySchema),
-  aunthenticate,
+  authenticate,
+  authorize("product:post"),
   productController.createProduct
 );
 
@@ -27,17 +31,17 @@ router.get(
 );
 
 router.put(
-  "/",
-  validateReqQuery(updateProductQuerySchema),
+  "/:id",
+  validateReqParams(productParamSchema),
   validateReqBody(updateProductBodySchema),
-  aunthenticate,
+  authenticate,
   productController.updateProduct
 );
 
 router.delete(
-  "/",
-  validateReqQuery(deleteProductQuerySchema),
-  aunthenticate,
+  "/:id",
+  validateReqParams(productParamSchema),
+  authenticate,
   productController.deleteProduct
 );
 
