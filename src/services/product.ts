@@ -44,6 +44,7 @@ export function createProduct(product: IProduct) {
  * @returns
  */
 export async function updateProduct(productId: string, product: IProduct) {
+  console.log(productId, product);
   if (!productId) {
     throw new BadRequestError("Product Id is required");
   }

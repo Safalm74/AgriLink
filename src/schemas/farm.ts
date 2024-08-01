@@ -17,7 +17,7 @@ export const createFarmBodySchema = Joi.object({
     "any.required": "Farm address is required",
   }),
 
-  userId: Joi.string().required().uuid().messages({
+  userId: Joi.string().optional().uuid().messages({
     "any.required": "User Id is required",
   }),
 }).options({
@@ -55,7 +55,7 @@ export const updateFarmBodySchema = Joi.object({
     "any.required": "Farm address is required",
   }),
 
-  userId: Joi.string().required().uuid().messages({
+  userId: Joi.string().optional().uuid().messages({
     "any.required": "User Id is required",
   }),
 }).options({

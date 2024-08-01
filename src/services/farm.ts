@@ -10,9 +10,7 @@ import { getUsers } from "./user";
  * @param farm
  * @returns
  */
-export async function createFarm(farm: IFarm) {
-  const { userId } = farm;
-
+export async function createFarm(farm: IFarm, userId: string) {
   if (!userId) {
     throw new BadRequestError("Farmer Id is required");
   }
@@ -35,7 +33,7 @@ export async function createFarm(farm: IFarm) {
     throw new BadRequestError("Farm name already exists");
   }
 
-  return await FarmModel.create(farm);
+  return await FarmModel.create({ ...farm, userId: userId });
 }
 
 /**
@@ -89,7 +87,9 @@ export async function updateFarm(farmId: string, farm: IFarm, userId: string) {
  * @returns
  */
 export async function deleteFarm(farmId: string, userId: string) {
-  const userFarms = await getFarmByUserId(userId);
+  const userFarms = (await getFarmByUserId(userId)).map((farm) => farm.id);
+
+  console.log(userFarms, farmId, userId);
 
   if (!userFarms.includes(farmId)) {
     throw new NotFoundError("Farm not found");

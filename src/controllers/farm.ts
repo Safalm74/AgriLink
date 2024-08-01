@@ -19,10 +19,11 @@ export async function createFarm(
 ) {
   try {
     const { body } = req;
+    const userId = req.user!.id;
 
     logger.info("Request: createFarm");
 
-    const data = await farmService.createFarm(body);
+    const data = await farmService.createFarm(body, userId!);
     res.status(httpStatusCode.CREATED).json(data);
   } catch (error) {
     next(error);
@@ -44,6 +45,22 @@ export async function getFarms(
     const { query } = req;
 
     const data = await farmService.getFarms(query);
+
+    res.status(httpStatusCode.OK).json(data);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getFarmByUserId(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const userId = req.user!.id;
+
+    const data = await farmService.getFarmByUserId(userId!);
 
     res.status(httpStatusCode.OK).json(data);
   } catch (error) {

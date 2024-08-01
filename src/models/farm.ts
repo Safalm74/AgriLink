@@ -51,9 +51,14 @@ export default class FarmModel extends BaseModel {
     return query;
   }
 
+  /**
+   * returns user farms
+   * @param farmerId
+   * @returns
+   */
   static async getFarmByUserId(farmerId: string) {
     const query = this.queryBuilder()
-      .select("id", "farm_name")
+      .select("id", "farm_name", "farm_address")
       .table(this.tableName)
       .where({ user_id: farmerId });
     return query;

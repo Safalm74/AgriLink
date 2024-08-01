@@ -32,6 +32,13 @@ router.get(
   farmController.getFarms
 );
 
+router.get(
+  "/userFarms",
+  authenticate,
+  authorize("farm:get"),
+  farmController.getFarmByUserId
+);
+
 router.put(
   "/:id",
   validateReqParams(farmParamSchema),

@@ -17,8 +17,8 @@ export async function up(knex: Knex): Promise<void> {
       .notNullable()
       .references("id")
       .inTable("users")
-      .onDelete("NO ACTION")
-      .onUpdate("NO ACTION");
+      .onDelete("CASCADE")
+      .onUpdate("CASCADE");
 
     table
       .uuid("farm_id")
@@ -26,8 +26,8 @@ export async function up(knex: Knex): Promise<void> {
       .notNullable()
       .references("id")
       .inTable("farms")
-      .onDelete("NO ACTION")
-      .onUpdate("NO ACTION");
+      .onDelete("CASCADE")
+      .onUpdate("CASCADE");
 
     table.timestamp("order_date").notNullable().defaultTo(knex.raw("now()"));
 
