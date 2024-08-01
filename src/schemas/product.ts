@@ -68,6 +68,7 @@ export const getProductQuerySchema = Joi.object({
       "number.base": "size must be a number",
     })
     .default(18),
+  searchKeyword: Joi.string().optional(),
 }).options({
   stripUnknown: true,
 });

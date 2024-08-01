@@ -15,4 +15,5 @@ export interface IGetProductQuery {
   farmId?: string;
   page?: number;
   size?: number;
+  searchKeyword?: string;
 }

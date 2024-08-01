@@ -35,7 +35,8 @@ export default class ProductModel extends BaseModel {
    * @returns
    */
   static get(filter: IGetProductQuery) {
-    const { id: id, page, size, farmId } = filter;
+    const { id: id, page, size, farmId, searchKeyword } = filter;
+
     const query = this.queryBuilder()
       .select(
         "id",
@@ -58,6 +59,10 @@ export default class ProductModel extends BaseModel {
 
     if (farmId) {
       query.where({ farm_id: farmId });
+    }
+
+    if (searchKeyword) {
+      query.where("product_name", "like", `%${searchKeyword}%`);
     }
 
     return query;
