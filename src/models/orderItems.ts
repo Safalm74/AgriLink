@@ -6,6 +6,8 @@ export default class OrderItemsModel extends BaseModel {
 
   static async get(filter: IGetOrderItemsQuery) {
     const { id, page, size, orderId } = filter;
+
+    console.log(filter);
     const query = this.queryBuilder()
       .select("id", "order_id", "product_id", "quantity", "unit_price")
       .table(this.tableName)

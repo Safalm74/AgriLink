@@ -16,6 +16,7 @@ export async function getOrderItem(filter: IGetOrderItemsQuery) {
  * @param orderItem
  */
 export async function createOrderItem(orderItem: IOrderItems) {
+  console.log(orderItem);
   const data = await OrderItemsModel.create(orderItem);
   return data;
 }

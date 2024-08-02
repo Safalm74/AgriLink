@@ -13,20 +13,20 @@ const router = express();
 router.get(
   "/",
   authenticate,
-  //authorize("orders:get"),
+  authorize("order:get"),
   orderController.getOrders
 );
 router.get(
   "/farm",
   authenticate,
-  //authorize("orders:get"),
+  authorize("order:get"),
   orderController.getOrderForFarm
 );
 router.post(
   "/",
   validateReqBody(createOrderBodySchema),
   authenticate,
-  //authorize("orders:post"),
+  authorize("order:post"),
   orderController.createOrder
 );
 router.patch(
@@ -34,14 +34,14 @@ router.patch(
   validateReqParams(orderParamSchema),
   validateReqBody(updateOrderBodySchema),
   authenticate,
-  // authorize("orders:put"),
+  authorize("order:put"),
   orderController.updateOrderStatus
 );
 router.delete(
   "/:id",
   validateReqParams(orderParamSchema),
   authenticate,
-  //authorize("orders:delete"),
+  authorize("order:delete"),
   orderController.deleteOrder
 );
 

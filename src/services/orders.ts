@@ -74,6 +74,8 @@ export async function getOrderForFarm(filter: IGetOrderQuery, userId: string) {
 export async function createOrder(order: ICreateOrderBody) {
   const { orderItems, farmId, customerId } = order;
 
+  console.log(order);
+
   let totalPrice = 0;
 
   const orderToCreate: IOrders = {
@@ -95,6 +97,8 @@ export async function createOrder(order: ICreateOrderBody) {
       quantity: orderItem.quantity,
       unitPrice: orderItem.unitPrice,
     };
+
+    console.log("in order", orderItem);
 
     totalPrice += orderItem.unitPrice * orderItem.quantity;
 

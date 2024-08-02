@@ -19,6 +19,8 @@ export async function getOrderItems(
 
     const data = await orderItemService.getOrderItem(filter);
 
+    console.log(filter);
+
     res.status(httpStatusCode.OK).json(data);
   } catch (error) {
     next(error);

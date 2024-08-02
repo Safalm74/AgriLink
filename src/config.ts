@@ -14,8 +14,8 @@ const config = {
   },
   jwt: {
     jwt_secret: process.env.JWT_SECRET,
-    accessTokenExpiryS: 10,
-    refreshTokenExpiryS: 20,
+    accessTokenExpiryS: "1D",
+    refreshTokenExpiryS: "30D",
   },
   minio: {
     MINIO_HOST: process.env.MINIO_HOST || "localhost",

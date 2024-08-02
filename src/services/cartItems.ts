@@ -67,6 +67,7 @@ export async function updateCartItem(
   cartItem: ICreateCartItemBody,
   userId: string
 ) {
+  console.log(cartItemId, cartItem, userId);
   if (!cartItemId) {
     throw new Error("Product Id is required");
   }

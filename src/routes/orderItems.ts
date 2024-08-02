@@ -2,14 +2,14 @@ import express from "express";
 import { authenticate, authorize } from "../middlewares/auth";
 import * as orderItemController from "../controllers/orderItems";
 import { validateReqQuery } from "../middlewares/validation";
-import { getOrderQuerySchema } from "../schemas/orders";
+import { orderItemsQuerySchema } from "../schemas/orderItems";
 
 const router = express.Router();
 
 //route to get order items
 router.get(
   "/",
-  validateReqQuery(getOrderQuerySchema),
+  validateReqQuery(orderItemsQuerySchema),
   authenticate,
   authorize("orderItems:get"),
   orderItemController.getOrderItems

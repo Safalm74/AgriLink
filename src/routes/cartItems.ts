@@ -11,6 +11,7 @@ import {
   cartParamSchema,
   createCartBodySchema,
   getCartQuerySchema,
+  updateCartBodySchema,
 } from "../schemas/cartItems";
 
 const router = express();
@@ -35,7 +36,7 @@ router.get(
 router.put(
   "/:id",
   validateReqParams(cartParamSchema),
-  validateReqBody(createCartBodySchema),
+  validateReqBody(updateCartBodySchema),
   authenticate,
   authorize("cart:put"),
   cartItemController.updateCartItem

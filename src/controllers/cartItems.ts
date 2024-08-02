@@ -68,6 +68,8 @@ export async function updateCartItem(
     const cartItemId = req.params.id;
     const userId = req.user!.id!;
 
+    console.log(cartItemId);
+
     const cartItem = await cartItemsService.updateCartItem(
       cartItemId,
       body,
