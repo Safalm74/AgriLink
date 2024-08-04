@@ -25,7 +25,7 @@ export async function getProducts(filter: IGetProductQuery) {
   const farmId = filter.farmId;
 
   logger.info(
-    "checking if farmid is provided and if provided product for farm"
+    "checking if farm id is provided and if provided product for farm"
   );
 
   if (farmId && !(await getFarms({ id: farmId, page: 1, size: 1 }))[0]) {

@@ -15,6 +15,7 @@ import { UserModel } from "../models/user";
 import { emptyCart } from "./cartItems";
 import { getFarmByUserId } from "./farm";
 import loggerWithNameSpace from "../utils/logger";
+import { createOrderItem, getOrderItem } from "./orderItems";
 
 const logger = loggerWithNameSpace("Orders service");
 
@@ -80,7 +81,7 @@ export async function createOrder(order: ICreateOrderBody) {
 
     logger.info("creating order item");
 
-    await OrderItemsModel.create(orderItemToCreate);
+    await createOrderItem(orderItemToCreate);
   });
 
   const orderToUpdate: IOrders = {
@@ -210,7 +211,7 @@ export async function updateOrderStatus(
   const data = await OrdersModel.updateStatus(id, orderStatus);
 
   if (orderStatus === "canceled") {
-    const orderItems = (await OrderItemsModel.get({
+    const orderItems = (await getOrderItem({
       orderId: id,
     })) as IOrderItems[];
 
