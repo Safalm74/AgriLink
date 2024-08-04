@@ -71,6 +71,7 @@ export async function getUsers(query: IGetUserQuery) {
  */
 export function getUserByEmail(email: string) {
   logger.info("Attempting to get user by email");
+
   return UserModel.UserModel.getUserByEmail(email);
 }
 
