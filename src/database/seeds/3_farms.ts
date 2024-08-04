@@ -15,7 +15,7 @@ export async function seed(knex: Knex): Promise<void> {
   const farmers = await knex.raw(
     `SELECT id FROM users WHERE role_id='${farmer_role_id.rows[0].id}'`
   );
-  console.log(farmer_role_id, farmers);
+
   return knex(TABLE_NAME)
     .del()
     .then(() => {

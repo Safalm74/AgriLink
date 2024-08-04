@@ -61,8 +61,6 @@ export default class OrdersModel extends BaseModel {
       .table(this.tableName)
       .returning("*");
 
-    console.log(orderToCreate, "creating order");
-
     return await query;
   }
 
