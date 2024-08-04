@@ -4,11 +4,13 @@ import { IFarm, IGetFarmQuery } from "../interfaces/farm";
 import FarmModel from "../models/farm";
 import { getRoleById } from "./role";
 import { getUsers } from "./user";
+import loggerWithNameSpace from "../utils/logger";
+
+const logger = loggerWithNameSpace("Farm service");
 
 /**
  * Function to create a new farm
  * @param farm
- * @returns
  */
 export async function createFarm(farm: IFarm, userId: string) {
   if (!userId) {
@@ -17,17 +19,23 @@ export async function createFarm(farm: IFarm, userId: string) {
 
   const existingUser = (await getUsers({ id: userId, page: 1, size: 1 }))[0];
 
+  logger.info("checking if user exists");
+
   if (!existingUser) {
     throw new NotFoundError("Farmer not found");
   }
 
   const userRole = await getRoleById(existingUser.roleId);
 
+  logger.info("checking if user is farmer");
+
   if (userRole !== "farmer") {
     throw new BadRequestError("Only farmer can have farm");
   }
 
   const existingFarms = (await getAllFarms()).map((farm) => farm.farmName);
+
+  logger.info("checking if farm name already exists");
 
   if (existingFarms.includes(farm.farmName)) {
     throw new BadRequestError("Farm name already exists");
@@ -39,7 +47,7 @@ export async function createFarm(farm: IFarm, userId: string) {
 /**
  * Function to get farm
  * @param filter
- * @returns
+ * @returns farm details
  */
 export async function getFarms(filter: IGetFarmQuery) {
   return await FarmModel.get(filter);
@@ -55,7 +63,7 @@ export async function getAllFarms() {
 /**
  * get all farms for the user
  * @param farmerId
- * @returns
+ * @returns farm details
  */
 export async function getFarmByUserId(farmerId: string) {
   return await FarmModel.getFarmByUserId(farmerId);
@@ -65,7 +73,6 @@ export async function getFarmByUserId(farmerId: string) {
  * Function to update farm
  * @param filter
  * @param farm
- * @returns
  */
 export async function updateFarm(farmId: string, farm: IFarm, userId: string) {
   if (!farmId) {
@@ -73,6 +80,8 @@ export async function updateFarm(farmId: string, farm: IFarm, userId: string) {
   }
 
   const existingFarms = (await getAllFarms()).map((farm) => farm.farmName);
+
+  logger.info("checking if farm name already exists");
 
   if (existingFarms.includes(farm.farmName)) {
     throw new BadRequestError("Farm name already exists");
@@ -84,12 +93,13 @@ export async function updateFarm(farmId: string, farm: IFarm, userId: string) {
 /**
  * Function to delete farm
  * @param farm
- * @returns
  */
 export async function deleteFarm(farmId: string, userId: string, role: string) {
   const userFarms = (await getFarmByUserId(userId)).map((farm) => farm.id);
   const userRole = await getRoleById(role);
   const existingFarms = (await getAllFarms()).map((farm) => farm.id);
+
+  logger.info("checking if farm exists");
 
   if (!existingFarms) {
     throw new NotFoundError("Farm not found");
@@ -98,6 +108,8 @@ export async function deleteFarm(farmId: string, userId: string, role: string) {
   if (!farmId) {
     throw new BadRequestError("Farm Id is required");
   }
+
+  logger.info("checking if farm belongs to user and user is admin");
 
   if (!userFarms.includes(farmId) && userRole !== "admin") {
     throw new NotFoundError("Farm not found");

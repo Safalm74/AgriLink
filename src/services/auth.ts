@@ -14,7 +14,7 @@ const logger = loggerWithNameSpace("Auth Service");
 /**
  * service function to login:
  * @param body
- * @returns new access and refresh token
+ * @returns user details, new access and refresh token
  */
 export async function login(body: Pick<IUser, "email" | "password">) {
   //to await bcrypt compare
@@ -98,7 +98,7 @@ export async function login(body: Pick<IUser, "email" | "password">) {
 /**
  * Service function to generate new access token from valid refresh token
  * @param RefreshToken
- * @returns
+ * @returns new access token
  */
 export async function refreshAccessToken(RefreshToken: string) {
   const token = RefreshToken.split(" ");

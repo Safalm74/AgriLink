@@ -1,10 +1,13 @@
 import { IGetOrderItemsQuery, IOrderItems } from "../interfaces/orderItems";
 import OrderItemsModel from "../models/orderItems";
+import loggerWithNameSpace from "../utils/logger";
+
+const logger = loggerWithNameSpace("Order Items service");
 
 /**
  * function to get item on order
  * @param filter
- * @returns
+ * @returns order item
  */
 export async function getOrderItem(filter: IGetOrderItemsQuery) {
   const data = await OrderItemsModel.get(filter);
@@ -16,7 +19,6 @@ export async function getOrderItem(filter: IGetOrderItemsQuery) {
  * @param orderItem
  */
 export async function createOrderItem(orderItem: IOrderItems) {
-  console.log(orderItem);
   const data = await OrderItemsModel.create(orderItem);
   return data;
 }
@@ -34,7 +36,6 @@ export async function updateOrderItem(id: string, orderItem: IOrderItems) {
 /**
  * function to delete order item
  * @param id
- * @returns
  */
 export async function deleteOrderItem(id: string) {
   const data = await OrderItemsModel.delete(id);

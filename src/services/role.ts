@@ -4,7 +4,7 @@ import { RoleModel } from "../models/role";
 /**
  * function to get role name by role id
  * @param id
- * @returns
+ * @returns role
  */
 export async function getRoleById(id: string) {
   const role = (await RoleModel.getRoleById(id))[0].role;
@@ -16,6 +16,11 @@ export async function getRoleById(id: string) {
   return role;
 }
 
+/**
+ * function to get role id by role
+ * @param role
+ * @returns role id
+ */
 export async function getIdByRole(role: string) {
   const id = (await RoleModel.getIdByRole(role))[0].id;
 

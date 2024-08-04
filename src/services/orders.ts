@@ -14,11 +14,92 @@ import ProductModel from "../models/product";
 import { UserModel } from "../models/user";
 import { emptyCart } from "./cartItems";
 import { getFarmByUserId } from "./farm";
+import loggerWithNameSpace from "../utils/logger";
+
+const logger = loggerWithNameSpace("Orders service");
+
+/**
+ * function to create order
+ * @param order
+ */
+export async function createOrder(order: ICreateOrderBody) {
+  const { orderItems, farmId, customerId } = order;
+
+  let totalPrice = 0;
+
+  const orderToCreate: IOrders = {
+    customerId,
+    farmId,
+    totalPrice: totalPrice,
+  };
+
+  logger.info("creating order");
+
+  const orderId: IOrders = (await OrdersModel.create(orderToCreate))[0];
+
+  if (!orderId) {
+    throw new NotFoundError("failed to create order");
+  }
+
+  logger.info("creating order items");
+
+  orderItems.forEach(async (orderItem) => {
+    const orderItemToCreate: IOrderItems = {
+      orderId: orderId.id!,
+      productId: orderItem.productId,
+      quantity: orderItem.quantity,
+      unitPrice: orderItem.unitPrice,
+    };
+
+    logger.info("calculating total amount");
+
+    totalPrice += orderItem.unitPrice * orderItem.quantity;
+
+    logger.info("reducing product quantity");
+
+    const productId = orderItem.productId;
+    const productQuantity = orderItem.quantity;
+
+    const product = (await ProductModel.get({ id: productId }))[0];
+
+    if (!product) {
+      throw new NotFoundError("Product not found");
+    }
+
+    logger.info("checking product quantity");
+
+    if (product.quantity < productQuantity) {
+      throw new Error("Insufficient quantity");
+    }
+
+    logger.info("updating product quantity");
+
+    product.quantity -= productQuantity;
+
+    await ProductModel.update(product.id!, product);
+
+    logger.info("creating order item");
+
+    await OrderItemsModel.create(orderItemToCreate);
+  });
+
+  const orderToUpdate: IOrders = {
+    customerId,
+    farmId,
+    totalPrice: totalPrice,
+  };
+
+  updateOrder({ id: orderId.id! }, orderToUpdate);
+
+  emptyCart(customerId);
+
+  return order;
+}
 
 /**
  * get order by user
  * @param userId
- * @returns
+ * @returns order details
  */
 export async function getOrders(userId: string) {
   const data = await OrdersModel.get(userId);
@@ -29,14 +110,18 @@ export async function getOrders(userId: string) {
  * get order for the farm
  * @param filter
  * @param userId
- * @returns
+ * @returns order details
  */
 export async function getOrderForFarm(filter: IGetOrderQuery, userId: string) {
+  logger.info("getting farm orders");
+
   const { farmId } = filter;
 
   if (!farmId) {
     throw new NotFoundError("Farm Id is required");
   }
+
+  logger.info("checking if farm exists");
 
   const existingUserFarms = (await getFarmByUserId(userId)).map(
     (farm) => farm.id
@@ -46,7 +131,11 @@ export async function getOrderForFarm(filter: IGetOrderQuery, userId: string) {
     throw new NotFoundError("Farm not found");
   }
 
+  logger.info("getting orders for farm");
+
   const orders: IOrders[] = await OrdersModel.getOrderForFarm(filter, farmId);
+
+  logger.info("wrapping order items for farm with customer data");
 
   const data = await Promise.all(
     orders.map(async (order) => {
@@ -67,75 +156,9 @@ export async function getOrderForFarm(filter: IGetOrderQuery, userId: string) {
 }
 
 /**
- * function to create order
- * @param order
- * @returns
- */
-export async function createOrder(order: ICreateOrderBody) {
-  const { orderItems, farmId, customerId } = order;
-
-  let totalPrice = 0;
-
-  const orderToCreate: IOrders = {
-    customerId,
-    farmId,
-    totalPrice: totalPrice,
-  };
-
-  const orderId: IOrders = (await OrdersModel.create(orderToCreate))[0];
-
-  if (!orderId) {
-    throw new NotFoundError("failed to create order");
-  }
-
-  orderItems.forEach(async (orderItem) => {
-    const orderItemToCreate: IOrderItems = {
-      orderId: orderId.id!,
-      productId: orderItem.productId,
-      quantity: orderItem.quantity,
-      unitPrice: orderItem.unitPrice,
-    };
-
-    totalPrice += orderItem.unitPrice * orderItem.quantity;
-
-    //reducing product quantity
-    const productId = orderItem.productId;
-    const productQuantity = orderItem.quantity;
-    const product = (await ProductModel.get({ id: productId }))[0];
-
-    if (!product) {
-      throw new NotFoundError("Product not found");
-    }
-
-    if (product.quantity < productQuantity) {
-      throw new Error("Insufficient quantity");
-    }
-
-    product.quantity -= productQuantity;
-
-    await ProductModel.update(product.id!, product);
-
-    await OrderItemsModel.create(orderItemToCreate);
-  });
-
-  const orderToUpdate: IOrders = {
-    customerId,
-    farmId,
-    totalPrice: totalPrice,
-  };
-
-  updateOrder({ id: orderId.id! }, orderToUpdate);
-
-  emptyCart(customerId);
-
-  return order;
-}
-
-/**
  * function to update order
  * @param filter
  * @param order
- * @returns
  */
 export async function updateOrder(filter: IGetOrderQuery, order: IOrders) {
   const { id } = filter;
@@ -169,9 +192,13 @@ export async function updateOrderStatus(
 
   const existingOrder = (await OrdersModel.getOrderById(id))[0];
 
+  logger.info("checking if order exists");
+
   if (!existingOrder) {
     throw new NotFoundError("Order not found");
   }
+
+  logger.info("checking if order can be updated");
 
   if (
     existingOrder.orderStatus === "delivered" ||
@@ -186,6 +213,8 @@ export async function updateOrderStatus(
     const orderItems = (await OrderItemsModel.get({
       orderId: id,
     })) as IOrderItems[];
+
+    logger.info("updating product quantity");
 
     orderItems.forEach(async (orderItem) => {
       const productId = await ProductModel.get({ id: orderItem.productId });
@@ -203,7 +232,6 @@ export async function updateOrderStatus(
 /**
  * function to delete order
  * @param filter
- * @returns
  */
 export async function deleteOrder(id: string, userId: string) {
   if (!id) {
@@ -213,6 +241,8 @@ export async function deleteOrder(id: string, userId: string) {
   const existingOrder = ((await OrdersModel.get(userId)) as IOrders[]).map(
     (order) => order.id
   );
+
+  logger.info("checking if order exists");
 
   if (!existingOrder.includes(id)) {
     throw new NotFoundError("Order not found");
