@@ -42,9 +42,11 @@ export class UserModel extends BaseModel {
         "address",
         "phone"
       )
-      .table(this.TABLE_NAME)
-      .limit(size!)
-      .offset((page! - 1) * size!);
+      .table(this.TABLE_NAME);
+
+    if (page && size) {
+      query.limit(size!).offset((page! - 1) * size!);
+    }
 
     if (id) {
       query.where({ id: id });

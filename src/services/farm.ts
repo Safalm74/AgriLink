@@ -86,17 +86,21 @@ export async function updateFarm(farmId: string, farm: IFarm, userId: string) {
  * @param farm
  * @returns
  */
-export async function deleteFarm(farmId: string, userId: string) {
+export async function deleteFarm(farmId: string, userId: string, role: string) {
   const userFarms = (await getFarmByUserId(userId)).map((farm) => farm.id);
+  const userRole = await getRoleById(role);
+  const existingFarms = (await getAllFarms()).map((farm) => farm.id);
 
-  console.log(userFarms, farmId, userId);
-
-  if (!userFarms.includes(farmId)) {
+  if (!existingFarms) {
     throw new NotFoundError("Farm not found");
   }
 
   if (!farmId) {
     throw new BadRequestError("Farm Id is required");
+  }
+
+  if (!userFarms.includes(farmId) && userRole !== "admin") {
+    throw new NotFoundError("Farm not found");
   }
 
   return await FarmModel.delete(farmId);

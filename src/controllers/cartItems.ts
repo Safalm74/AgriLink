@@ -18,6 +18,8 @@ export async function createCartItem(
     const { body } = req;
     const userId = req.user!.id;
 
+    console.log(body);
+
     const cartItem = await cartItemsService.createCartItem({
       userId: userId,
       ...body,

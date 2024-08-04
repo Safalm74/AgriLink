@@ -49,9 +49,10 @@ export default class ProductModel extends BaseModel {
         "imageUrl",
         "category"
       )
-      .table(this.tableName)
-      .limit(size!)
-      .offset((page! - 1) * size!);
+      .table(this.tableName);
+    if (page && size) {
+      query.limit(size!).offset((page! - 1) * size!);
+    }
 
     if (id) {
       query.where({ id: id });
@@ -62,7 +63,7 @@ export default class ProductModel extends BaseModel {
     }
 
     if (searchKeyword) {
-      query.where("product_name", "like", `%${searchKeyword}%`);
+      query.where("product_name", "ILIKE", `%${searchKeyword}%`);
     }
 
     return query;

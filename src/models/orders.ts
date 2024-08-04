@@ -30,6 +30,7 @@ export default class OrdersModel extends BaseModel {
   }
 
   static async getOrderForFarm(filter: IGetOrderQuery, farmId: string) {
+    const { page, size } = filter;
     const query = this.queryBuilder()
       .select(
         "id",
@@ -41,6 +42,10 @@ export default class OrdersModel extends BaseModel {
       )
       .table(this.tableName)
       .where({ farm_id: farmId });
+
+    if (page && size) {
+      query.limit(size!).offset((page! - 1) * size!);
+    }
 
     return await query;
   }
@@ -55,6 +60,8 @@ export default class OrdersModel extends BaseModel {
       .insert(orderToCreate)
       .table(this.tableName)
       .returning("*");
+
+    console.log(orderToCreate, "creating order");
 
     return await query;
   }

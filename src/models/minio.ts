@@ -9,6 +9,7 @@ export async function getUploadUrl() {
     uuidName,
     config.minio.PUT_TIME
   );
+
   return { url: url, fileName: uuidName, bucketName: bucketName };
 }
 

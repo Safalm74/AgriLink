@@ -25,7 +25,7 @@ const config = {
     MINIO_CONSOLE_PORT: process.env.MINIO_CONSOLE_PORT || 9001,
     MINIO_BUCKET_NAME: "agrilink-product-images",
     PUT_TIME: 300,
-    GET_TIME: 300,
+    GET_TIME: 10000,
   },
 };
 

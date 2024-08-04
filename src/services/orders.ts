@@ -74,8 +74,6 @@ export async function getOrderForFarm(filter: IGetOrderQuery, userId: string) {
 export async function createOrder(order: ICreateOrderBody) {
   const { orderItems, farmId, customerId } = order;
 
-  console.log(order);
-
   let totalPrice = 0;
 
   const orderToCreate: IOrders = {
@@ -97,8 +95,6 @@ export async function createOrder(order: ICreateOrderBody) {
       quantity: orderItem.quantity,
       unitPrice: orderItem.unitPrice,
     };
-
-    console.log("in order", orderItem);
 
     totalPrice += orderItem.unitPrice * orderItem.quantity;
 
@@ -186,6 +182,21 @@ export async function updateOrderStatus(
 
   const data = await OrdersModel.updateStatus(id, orderStatus);
 
+  if (orderStatus === "canceled") {
+    const orderItems = (await OrderItemsModel.get({
+      orderId: id,
+    })) as IOrderItems[];
+
+    orderItems.forEach(async (orderItem) => {
+      const productId = await ProductModel.get({ id: orderItem.productId });
+      const finalQuantity = +productId[0].quantity + +orderItem.quantity;
+      await ProductModel.update(productId[0].id!, {
+        ...productId[0],
+        quantity: finalQuantity,
+      });
+    });
+  }
+
   return data;
 }
 
@@ -208,5 +219,6 @@ export async function deleteOrder(id: string, userId: string) {
   }
 
   const data = await OrdersModel.delete(id);
+
   return data;
 }

@@ -105,8 +105,9 @@ export async function deleteFarm(
   try {
     const id = req.params.id;
     const userId = req.user!.id;
+    const role = req.user!.roleId;
 
-    const data = await farmService.deleteFarm(id, userId!);
+    const data = await farmService.deleteFarm(id, userId!, role!);
 
     res.status(httpStatusCode.NO_CONTENT).json(data);
   } catch (error) {

@@ -5,14 +5,11 @@ export default class OrderItemsModel extends BaseModel {
   static tableName = "order_items";
 
   static async get(filter: IGetOrderItemsQuery) {
-    const { id, page, size, orderId } = filter;
+    const { id, orderId } = filter;
 
-    console.log(filter);
     const query = this.queryBuilder()
       .select("id", "order_id", "product_id", "quantity", "unit_price")
-      .table(this.tableName)
-      .limit(size!)
-      .offset((page! - 1) * size!);
+      .table(this.tableName);
     if (id) {
       query.where({ id: id });
     }

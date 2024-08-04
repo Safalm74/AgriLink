@@ -15,8 +15,10 @@ export default class CartItemModel extends BaseModel {
     };
     const query = this.queryBuilder()
       .insert(cartItemToCreate)
-      .into(this.tableName);
-    return query;
+      .into(this.tableName)
+      .returning("*");
+
+    return await query;
   }
 
   static async get(filter: IGetCartItemQuery, userId: string) {
@@ -35,17 +37,14 @@ export default class CartItemModel extends BaseModel {
   }
 
   static async getCartIdByProductId(productId: string, userId: string) {
-    try {
-      const query = this.queryBuilder()
-        .select("id", "quantity")
-        .from(this.tableName)
-        .where({
-          product_id: productId,
-        });
-      return await query;
-    } catch (err) {
-      console.log(err);
-    }
+    const query = this.queryBuilder()
+      .select("id", "quantity")
+      .from(this.tableName)
+      .where({
+        product_id: productId,
+        user_id: userId,
+      });
+    return await query;
   }
 
   static async update(

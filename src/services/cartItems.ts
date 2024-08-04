@@ -23,6 +23,9 @@ export async function getCartItems(filter: IGetCartItemQuery, userId: string) {
  */
 export async function createCartItem(cartItem: ICreateCartItemBody) {
   const { productId, userId } = cartItem;
+
+  console.log("in createCartItem cartItem:", cartItem);
+
   const maxPossibleProductQuantity = +(
     await ProductModel.get({ id: productId })
   )[0].quantity;
@@ -36,6 +39,7 @@ export async function createCartItem(cartItem: ICreateCartItemBody) {
     userId!
   ))![0];
 
+  console.log("existingCartId", existingCartId, userId);
   if (existingCartId) {
     const existingQuantity: number = +existingCartId.quantity;
 
@@ -44,6 +48,8 @@ export async function createCartItem(cartItem: ICreateCartItemBody) {
     } else {
       cartItem.quantity = maxPossibleProductQuantity;
     }
+
+    console.log("reached here");
 
     return CartItemModel.update(existingCartId!.id, cartItem, userId!);
   } else {
@@ -67,7 +73,6 @@ export async function updateCartItem(
   cartItem: ICreateCartItemBody,
   userId: string
 ) {
-  console.log(cartItemId, cartItem, userId);
   if (!cartItemId) {
     throw new Error("Product Id is required");
   }
