@@ -4,23 +4,16 @@ import Router from "./routes/"; //index router
 import { genericErrorHandler, notFoundError } from "./middlewares/errorHandler";
 import { requestLogger } from "./middlewares/logger";
 import helmet from "helmet";
-import rateLimit from "express-rate-limit";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
 const app = express();
 
-const limiter = rateLimit({
-  windowMs: 60 * 1000,
-  limit: 1000,
-  message: "Too many requests",
-});
-
 //Middleware to add security level
 app.use(helmet());
 
-//Middleware to limt request for the ip address
-app.use(limiter);
+//Middleware to limit request for the ip address
+app.use(config.rateLimit.limiter);
 
 //Middleware to parse incoming requests with JSON payload
 app.use(express.json());
