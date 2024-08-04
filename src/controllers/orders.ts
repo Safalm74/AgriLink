@@ -4,10 +4,37 @@ import { Request } from "../interfaces/auth";
 import {
   ICreateOrderBody,
   IGetOrderQuery,
-  IOrders,
   IUpdateOrderStatus,
 } from "../interfaces/orders";
 import httpStatusCode from "http-status-codes";
+import loggerWithNameSpace from "../utils/logger";
+
+const logger = loggerWithNameSpace("Order Controller");
+
+/**
+ * Controller function to create orders
+ * @param req
+ * @param res
+ * @param next
+ */
+export async function createOrder(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    logger.info("Req: create Orders");
+
+    const userId = req.user!.id!;
+    const order = { ...req.body, customerId: userId } as ICreateOrderBody;
+
+    const data = await orderService.createOrder(order);
+
+    res.status(httpStatusCode.CREATED).json(data);
+  } catch (error) {
+    next(error);
+  }
+}
 
 /**
  * Controller function to get orders
@@ -21,6 +48,8 @@ export async function getOrders(
   next: NextFunction
 ) {
   try {
+    logger.info("Req: get Orders");
+
     const userId = req.user!.id!;
 
     const data = await orderService.getOrders(userId);
@@ -43,35 +72,14 @@ export async function getOrderForFarm(
   next: NextFunction
 ) {
   try {
+    logger.info("Req: get Orders for the farm");
+
     const filter = req.query as IGetOrderQuery;
     const userId = req.user!.id!;
 
     const data = await orderService.getOrderForFarm(filter, userId);
 
     res.status(httpStatusCode.OK).json(data);
-  } catch (error) {
-    next(error);
-  }
-}
-
-/**
- * Controller function to create orders
- * @param req
- * @param res
- * @param next
- */
-export async function createOrder(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const userId = req.user!.id!;
-    const order = { ...req.body, customerId: userId } as ICreateOrderBody;
-
-    const data = await orderService.createOrder(order);
-
-    res.status(httpStatusCode.CREATED).json(data);
   } catch (error) {
     next(error);
   }
@@ -89,6 +97,8 @@ export async function updateOrderStatus(
   next: NextFunction
 ) {
   try {
+    logger.info("Req: update Order Status");
+
     const id = req.params.id;
     const orderStatus = req.body as IUpdateOrderStatus;
 
@@ -112,6 +122,8 @@ export async function deleteOrder(
   next: NextFunction
 ) {
   try {
+    logger.info("Req: delete Order");
+
     const id = req.params.id;
     const userId = req.user!.id;
 

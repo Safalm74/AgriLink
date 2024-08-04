@@ -18,10 +18,10 @@ export async function createFarm(
   next: NextFunction
 ) {
   try {
+    logger.info("Request: createFarm");
+
     const { body } = req;
     const userId = req.user!.id;
-
-    logger.info("Request: createFarm");
 
     const data = await farmService.createFarm(body, userId!);
     res.status(httpStatusCode.CREATED).json(data);
@@ -42,6 +42,8 @@ export async function getFarms(
   next: NextFunction
 ) {
   try {
+    logger.info("Request: getFarms");
+
     const { query } = req;
 
     const data = await farmService.getFarms(query);
@@ -58,6 +60,8 @@ export async function getFarmByUserId(
   next: NextFunction
 ) {
   try {
+    logger.info("Request: getFarmByUserId");
+
     const userId = req.user!.id;
 
     const data = await farmService.getFarmByUserId(userId!);
@@ -80,6 +84,8 @@ export async function updateFarm(
   next: NextFunction
 ) {
   try {
+    logger.info("Request: updateFarm");
+
     const { body, params } = req;
     const userId = req.user!.id;
 
@@ -103,6 +109,8 @@ export async function deleteFarm(
   next: NextFunction
 ) {
   try {
+    logger.info("Request: deleteFarm");
+
     const id = req.params.id;
     const userId = req.user!.id;
     const role = req.user!.roleId;

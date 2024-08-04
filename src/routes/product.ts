@@ -24,12 +24,14 @@ router.post(
   productController.createProduct
 );
 
+//Route to handle product get operations
 router.get(
   "/",
   validateReqQuery(getProductQuerySchema),
   productController.getProducts
 );
 
+//Route to handle product put operations
 router.put(
   "/:id",
   validateReqParams(productParamSchema),
@@ -38,6 +40,7 @@ router.put(
   productController.updateProduct
 );
 
+//Route to handle product delete operations
 router.delete(
   "/:id",
   validateReqParams(productParamSchema),

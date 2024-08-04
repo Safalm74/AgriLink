@@ -15,7 +15,7 @@ import express from "express";
 
 const router = express();
 
-//Route to handle farm operations
+//Route to handle farm post operations
 router.post(
   "/",
   validateReqBody(createFarmBodySchema),
@@ -24,6 +24,7 @@ router.post(
   farmController.createFarm
 );
 
+//Route to handle farm get operations
 router.get(
   "/",
   validateReqQuery(getFarmQuerySchema),
@@ -32,6 +33,7 @@ router.get(
   farmController.getFarms
 );
 
+//Route to handle farm get by farmer id operations
 router.get(
   "/userFarms",
   authenticate,
@@ -39,6 +41,7 @@ router.get(
   farmController.getFarmByUserId
 );
 
+//Route to handle farm put operations
 router.put(
   "/:id",
   validateReqParams(farmParamSchema),
@@ -48,6 +51,7 @@ router.put(
   farmController.updateFarm
 );
 
+//Route to handle farm delete operations
 router.delete(
   "/:id",
   validateReqParams(farmParamSchema),

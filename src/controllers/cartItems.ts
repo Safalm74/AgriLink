@@ -2,6 +2,9 @@ import * as cartItemsService from "../services/cartItems";
 import httpStatusCode from "http-status-codes";
 import { NextFunction, Response } from "express";
 import { Request } from "../interfaces/auth";
+import loggerWithNameSpace from "../utils/logger";
+
+const logger = loggerWithNameSpace("CartItem Controller");
 
 /**
  * controllers to create cart items
@@ -15,6 +18,8 @@ export async function createCartItem(
   next: NextFunction
 ) {
   try {
+    logger.info("Req: create cart item");
+
     const { body } = req;
     const userId = req.user!.id;
 
@@ -43,6 +48,8 @@ export async function getCartItems(
   next: NextFunction
 ) {
   try {
+    logger.info("Req: get cart items");
+
     const { query } = req;
     const userId = req.user!.id!;
 
@@ -66,6 +73,8 @@ export async function updateCartItem(
   next: NextFunction
 ) {
   try {
+    logger.info("Req: update cart item");
+
     const { body } = req;
     const cartItemId = req.params.id;
     const userId = req.user!.id!;
@@ -96,6 +105,8 @@ export async function deleteCartItem(
   next: NextFunction
 ) {
   try {
+    logger.info("Req: delete cart item");
+
     const cartItemId = req.params.id;
     const userId = req.user!.id!;
 

@@ -16,7 +16,7 @@ import {
 
 const router = express();
 
-//Route to handle cartItem operations
+//Route to handle cartItem post operations
 router.post(
   "/",
   validateReqBody(createCartBodySchema),
@@ -25,6 +25,7 @@ router.post(
   cartItemController.createCartItem
 );
 
+//Route to handle cartItem get operations
 router.get(
   "/",
   validateReqQuery(getCartQuerySchema),
@@ -33,6 +34,7 @@ router.get(
   cartItemController.getCartItems
 );
 
+//Route to handle cartItem put operations
 router.put(
   "/:id",
   validateReqParams(cartParamSchema),
@@ -42,6 +44,7 @@ router.put(
   cartItemController.updateCartItem
 );
 
+//Route to handle cartItem delete operations
 router.delete(
   "/:id",
   validateReqParams(cartParamSchema),
