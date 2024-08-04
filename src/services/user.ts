@@ -82,6 +82,10 @@ export async function updateUser(id: string, user: IUser) {
     throw new NotFoundError("user not found");
   }
 
+  logger.info("hashing password");
+  const password = await bcrypt.hash(user.password, 10);
+  user.password = password;
+
   return UserModel.UserModel.update(id, user);
 }
 
