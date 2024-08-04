@@ -40,22 +40,22 @@ services:
       - ./minio_data:/data
     restart: always
 
-  # backend:
-  #   container_name: backend
-  #   image: agrilink-backend
+  backend:
+    container_name: backend
+    image: agrilink-backend
 
-  #   environment:
-  #     - DB_NAME=${DB_NAME}
-  #     - DB_HOST=${DB_HOST}
-  #     - DB_PW=${DB_PW}
-  #     - DB_USER=${DB_USER}
-  #     - DB_PORT=${DB_PORT}
-  #     - JWT_SECRET=${JWT_SECRET}
-  #     - DB_PORT=${DB_PORT}
-  #     - DB_CLIENT=${DB_CLIENT}
-  #   ports:
-  #     - "${PORT}:${PORT}"
-  #   command: bash -c "npm start"
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}
+      - DB_PW=${DB_PW}
+      - DB_USER=${DB_USER}
+      - DB_PORT=${DB_PORT}
+      - JWT_SECRET=${JWT_SECRET}
+      - DB_PORT=${DB_PORT}
+      - DB_CLIENT=${DB_CLIENT}
+    ports:
+      - "${PORT}:${PORT}"
+    command: bash -c "npm start"
 
-  #   restart: always
-  #   depends_on: [postgres]
+    restart: always
+    depends_on: [postgres]
