@@ -1,16 +1,6 @@
 import * as Minio from "minio";
 import config from "./config";
 
-const corsConfig = [
-  {
-    AllowedOrigins: ["*"],
-    AllowedMethods: ["GET", "PUT", "POST", "DELETE"],
-    AllowedHeaders: ["*"],
-    ExposeHeaders: [],
-    MaxAgeSeconds: 3000,
-  },
-];
-
 const minioClient = new Minio.Client({
   endPoint: config.minio.MINIO_HOST,
   port: +config.minio.MINIO_API_PORT,
