@@ -8,7 +8,6 @@ import {
   IUpdateOrderStatus,
 } from "../interfaces/orders";
 import { IUser } from "../interfaces/users";
-import OrderItemsModel from "../models/orderItems";
 import OrdersModel from "../models/orders";
 import ProductModel from "../models/product";
 import { UserModel } from "../models/user";
