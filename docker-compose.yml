@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   postgres:
     container_name: postgres
@@ -25,14 +27,12 @@ services:
       - postgres
 
   minio:
-    container_name: minio_conatiner
+    container_name: minio_container
     image: minio/minio
     command: server /data --console-address ":9001"
     environment:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
-      - MINIO_CONSOLE_PORT=${MINIO_CONSOLE_PORT}
-      - MINIO_API_PORT=${MINIO_API_PORT}
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -42,20 +42,23 @@ services:
 
   backend:
     container_name: backend
-    image: agrilink-backend
-
+    image: safarajmanandhar/agrilink-backend
+    build:
+      context: .  # Adjust if your Dockerfile is in a different directory
     environment:
       - DB_NAME=${DB_NAME}
-      - DB_HOST=${DB_HOST}
+      - DB_HOST=postgres
       - DB_PW=${DB_PW}
       - DB_USER=${DB_USER}
       - DB_PORT=${DB_PORT}
       - JWT_SECRET=${JWT_SECRET}
-      - DB_PORT=${DB_PORT}
       - DB_CLIENT=${DB_CLIENT}
+      - MINIO_HOST=minio
+      - MINIO_PORT=9000
     ports:
       - "${PORT}:${PORT}"
     command: bash -c "npm start"
-
     restart: always
-    depends_on: [postgres]
+    depends_on:
+      - postgres
+      - minio

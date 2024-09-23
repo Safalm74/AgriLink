@@ -19,7 +19,7 @@ const config = {
     refreshTokenExpiryS: "30D",
   },
   minio: {
-    MINIO_HOST: process.env.MINIO_HOST || "localhost",
+    MINIO_HOST: process.env.MINIO_HOST,
     MINIO_ROOT_USER: process.env.MINIO_ROOT_USER,
     MINIO_ROOT_PASSWORD: process.env.MINIO_ROOT_PASSWORD,
     MINIO_API_PORT: process.env.MINIO_API_PORT || 9000,
